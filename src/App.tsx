@@ -2,25 +2,32 @@ import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import setEndOfContenteditable from "./helpers/setEndofContenteditable";
+import insertHTMLNode from "./helpers/insertHTMLNode";
 
 function App() {
   let [content, setContent] = useState("");
   let [previousKey, setPreviousKey] = useState("");
 
+  
   const formatDocument = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const currentKey = event.key;
-    if (currentKey === "-" && previousKey === "-") {
-      let editable = document.getElementsByClassName("editable")[0];
-      event.preventDefault();
-      setContent(content.substring(0, content.length - 3) + "h");
-      editable.innerHTML = editable.innerHTML.substring(0, editable.innerHTML.length - 2)
-      let newElement = document.createElement("h1");
-      document.getElementsByClassName("editable")[0].appendChild(newElement);
-      newElement.textContent = "- "
-      setEndOfContenteditable(event.target)
+    const keyCombo = previousKey + currentKey
+
+    console.log("Combo: " + keyCombo)
+
+    switch (keyCombo) {
+      case "-!":
+        insertHTMLNode(document.getElementsByClassName("editable")[0], content, "h1", event, setContent)
+        break;
+      case "-@":
+        insertHTMLNode(document.getElementsByClassName("editable")[0], content, "h2", event, setContent)
+        break;
+      case "-#":
+        insertHTMLNode(document.getElementsByClassName("editable")[0], content, "h3", event, setContent)
+        break;
     }
 
-    setPreviousKey(currentKey);
+    if (currentKey !== "Shift") setPreviousKey(currentKey);
   };
 
   return (
