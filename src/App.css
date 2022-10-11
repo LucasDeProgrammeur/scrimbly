@@ -20,7 +20,7 @@
   background-color: #2d3441;
   border-style: none;
   height: 100%;
-  width: 100%;
+  width: calc(100% - 220px);
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
@@ -55,15 +55,30 @@
 }
 
 .leftMenu {
-  position: absolute;
-  z-index: 1;
   background-color: rgb(42, 42, 48);
-  top: 40px;
-  left: 0;
-  width: 300px;
-  height: calc(100vh - 40px);
-  display: inline-block;
+  width: 200px;
+  height: 100%;
+  float: left;
   box-shadow: -37px 40px 90px 1px;
+}
+
+.topBar {
+  height: 32px;
+  width: 100%;
+  padding: 5px;
+  background-color: rgb(54, 54, 59);
+}
+
+.topBar button {
+  font-family: 'Segoe MDL2 Assets';
+  height: 32px;
+  width: 32px;
+  background-color: rgb(58, 58, 66);
+  color: white;
+  border-width: 2px;
+  border-radius: 8px;
+  border: 1px solid rgb(38, 38, 44);
+  margin: 0 4px;
 }
 
 .App-link {
@@ -88,4 +103,12 @@
 
 .windowControls *:hover {
   background-color: rgb(45, 45, 65);
+}
+
+.devBuildNotifier {
+  color: white;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  opacity: 0.5;
 }

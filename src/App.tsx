@@ -6,16 +6,14 @@ import insertHTMLNode from "./helpers/insertHTMLNode";
 import LeftMenu from "./components/LeftMenu";
 import {ipcRenderer} from "electron";
 import closeApp from "./ipcControls";
+import wrapContent from "./helpers/wrapContent";
+import checkForInlineFormatting from "./helpers/checkForFormatting";
 // import initDB from "./io/dbFunctions";
 
 function App() {
   let [content, setContent] = useState("");
   let [previousKey, setPreviousKey] = useState("");
   let [visible, setVisible] = useState(false)
-  document.getElementById("minimize")?.addEventListener('click', () => {
-    console.log("test")
-  })
-
 
   useEffect(() => {
     content = localStorage.getItem("data") || "";
@@ -65,7 +63,7 @@ function App() {
   return (
     <>
       <div className="draggable">
-        <p>Test editor</p> 
+        <p>Scrimbly development build</p> 
       </div>
 
       <div className="windowControls">
@@ -75,17 +73,18 @@ function App() {
         </div>
 
       <div className="App">
-        <button className="revealButton" onClick={(e) => setVisible(!visible)}>Reveal</button>
-        {visible && <LeftMenu />}
+       
+        <LeftMenu />
 
         <div
           contentEditable="true"
           suppressContentEditableWarning={true}
           onKeyDown={(e) => {
             const target = e.target as HTMLInputElement;
+
             if (target.innerHTML === "<br>" || target.innerHTML === "") {
               e.preventDefault();
-              if (e.key.length == 1) {
+              if (e.key.length === 1) {
                 target.innerHTML = "<div>" + e.key + "</div>";
                 setEndOfContenteditable(e.target);
               } else {
@@ -99,6 +98,7 @@ function App() {
             formatDocument(e);
             setContent(val);
             localStorage.setItem("data", content);
+            checkForInlineFormatting(target);
 
             //e.target.setSelectionRange(e.target.innerText.length, e.target.innerText.length)
           }}
@@ -109,6 +109,7 @@ function App() {
             <br />
           </div>
         </div>
+        <div className="devBuildNotifier">Development build</div>
       </div>
     </>
   );
