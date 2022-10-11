@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import setEndOfContenteditable from "./helpers/setEndofContenteditable";
 import insertHTMLNode from "./helpers/insertHTMLNode";
 import LeftMenu from "./components/LeftMenu";
-import initDB from "./io/dbFunctions";
+import {ipcRenderer} from "electron";
+import closeApp from "./ipcControls";
+// import initDB from "./io/dbFunctions";
 
 function App() {
   let [content, setContent] = useState("");
   let [previousKey, setPreviousKey] = useState("");
   let [visible, setVisible] = useState(false)
-  initDB()
+  document.getElementById("minimize")?.addEventListener('click', () => {
+    console.log("test")
+  })
+
+
+  useEffect(() => {
+    content = localStorage.getItem("data") || "";
+    document.getElementsByClassName("editable")[0].innerHTML = content;
+    
+  }, [])
 
   const formatDocument = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const currentKey = event.key;
@@ -54,8 +65,14 @@ function App() {
   return (
     <>
       <div className="draggable">
-        <p>Scrimbly (developed by Lucas Hopman)</p>
+        <p>Test editor</p> 
       </div>
+
+      <div className="windowControls">
+          <button onClick={() => controls.minimize()} id="minimize">&#xE921;</button>
+          <button onClick={() => controls.maximize()} id="maximize">&#xE922;</button>
+          <button onClick={() => controls.close()} id="close">&#xE8BB;</button>
+        </div>
 
       <div className="App">
         <button className="revealButton" onClick={(e) => setVisible(!visible)}>Reveal</button>
@@ -81,13 +98,15 @@ function App() {
             let val = target?.innerHTML;
             formatDocument(e);
             setContent(val);
+            localStorage.setItem("data", content);
 
             //e.target.setSelectionRange(e.target.innerText.length, e.target.innerText.length)
           }}
           className="editable"
         >
+
           <div>
-            <br></br>
+            <br />
           </div>
         </div>
       </div>

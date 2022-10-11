@@ -1,6 +1,6 @@
 const path = require("path");
 
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const isDev = require("electron-is-dev");
 
 function createWindow() {
@@ -10,7 +10,8 @@ function createWindow() {
     height: 720,
     frame: false,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.ts')
     }
   });
 
@@ -41,6 +42,19 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+ipcMain.handle('minimize', () => {
+  BrowserWindow.getFocusedWindow().minimize();
+})
+
+ipcMain.handle('maximize', () => {
+  BrowserWindow.getFocusedWindow().maximize();
+})
+
+ipcMain.handle('close', () => {
+  BrowserWindow.getFocusedWindow().close();
+})
+
 
 app.on("activate", () => {
   // On macOS it's common to re-create a window in the app when the
