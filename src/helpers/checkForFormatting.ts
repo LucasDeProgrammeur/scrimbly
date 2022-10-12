@@ -15,18 +15,6 @@ const checkForInlineFormatting = (editable: Element) => {
         i % 2 !== 0 &&
         editable.innerHTML.substring(locs[i - 1], el).length !== 1
       ) {
-        console.log("New content " +
-        editable.innerHTML.substring(0, locs[i - 1]) +
-        "<" +
-        e.element +
-        ">" +
-        editable.innerHTML.substring(locs[i - 1] + e.key.length, el) +
-        "</" +
-        e.element +
-        ">&#8203;" +
-        editable.innerHTML.substring(el, editable.innerHTML.length));
-
-
         editable.innerHTML =
           editable.innerHTML.substring(0, locs[i - 1]) +
           "<" +
