@@ -39,7 +39,7 @@ function App() {
   const formatDocument = (event: React.KeyboardEvent<HTMLDivElement>) => {
     const currentKey = event.key;
     const keyCombo = previousKey + currentKey;
-
+    console.log(keyCombo)
     switch (keyCombo) {
       case "-!":
         insertHTMLNode(
@@ -126,7 +126,7 @@ function App() {
         <div
           contentEditable="true"
           suppressContentEditableWarning={true}
-          onKeyDown={(e) => {
+          onKeyUp={(e) => {
             if (entryBarToggle) {
               document.getElementById("entryBar")?.focus();
               e.preventDefault();
