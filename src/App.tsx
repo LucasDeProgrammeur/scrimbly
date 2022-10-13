@@ -52,7 +52,7 @@ function App() {
           &#xE8BB;
         </button>
       </div>
-      <SnackbarProvider maxSnack={3}>
+      <SnackbarProvider autoHideDuration={2000}  maxSnack={3}>
       <div
         className="App"
         onKeyDown={(e) => {
