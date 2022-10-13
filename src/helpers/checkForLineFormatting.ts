@@ -37,13 +37,4 @@ export default function checkForLineFormatting(
       }
     })
   })
-
-    //let child = editable.appendChild(newElement);
-
-  
-  
-
-  newElement.textContent = "- ";
- // goToPositionContentEditable(editable);
 }
-
