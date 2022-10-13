@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import setEndOfContenteditable from "./helpers/setEndofContenteditable";
-import insertHTMLNode from "./helpers/checkForLineFormatting";
 import LeftMenu from "./components/LeftMenu";
-import { ipcRenderer } from "electron";
-import closeApp from "./ipcControls";
-import wrapContent from "./helpers/wrapContent";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
 import EntryBar from "./components/EntryBar";
 import {
-  getData,
   resetData,
   saveNewNote,
   saveSpecificNote,

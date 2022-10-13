@@ -1,4 +1,3 @@
-import setEndOfContenteditable from "./setEndofContenteditable";
 import goToPositionContentEditable from "./goToPositionContentEditable";
 
 const checkForInlineFormatting = (editable: Element) => {

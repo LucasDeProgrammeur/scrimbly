@@ -1,5 +1,3 @@
-import goToPositionContentEditable from "./goToPositionContentEditable";
-
 export default function checkForLineFormatting(
   editable: Element,
   content: string,
@@ -16,7 +14,6 @@ export default function checkForLineFormatting(
     {syntax: "-cb", element: "input", elementType: "checkbox"}
   ];
 
-  let newElement = document.createElement(nodeType);
 
   let children = editable.querySelectorAll("div");
 

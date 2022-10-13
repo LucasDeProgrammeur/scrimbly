@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { getData, removeNote } from "../helpers/io/storageFunctions";
 
 interface LeftMenuProps {
