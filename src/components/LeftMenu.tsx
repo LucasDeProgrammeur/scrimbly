@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { getData, removeNote } from "../helpers/io/storageFunctions";
+import { useSnackbar } from 'notistack';
 
 interface LeftMenuProps {
   setEntrybarToggle: any;
@@ -19,6 +20,7 @@ const LeftMenu = ({
   useEffect(() => {
     if (!fetchedNotes.length) setFetchedNotes(getData().notes);
   }, []);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   return (
     <div className="leftMenu">
@@ -33,6 +35,7 @@ const LeftMenu = ({
           &#xE74D;
         </button>
         <button>&#xE897;</button>
+        <button onClick={() => { controls.export().then(() => {enqueueSnackbar("Data exported");})  }}>&#xE78C;</button>
       </div>
       <div className="fileList">
         { 

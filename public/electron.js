@@ -1,6 +1,6 @@
 const path = require("path");
 
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 
 function createWindow() {
@@ -11,6 +11,7 @@ function createWindow() {
     frame: false,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.ts')
     }
   });
@@ -53,6 +54,10 @@ ipcMain.handle('maximize', () => {
 
 ipcMain.handle('close', () => {
   BrowserWindow.getFocusedWindow().close();
+})
+
+ipcMain.handle('fileOpen', () => {
+  return dialog.showOpenDialog({properties: ['openDirectory']});
 })
 
 

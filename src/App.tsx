@@ -4,6 +4,7 @@ import setEndOfContenteditable from "./helpers/setEndofContenteditable";
 import LeftMenu from "./components/LeftMenu";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
 import EntryBar from "./components/EntryBar";
+import { SnackbarProvider } from 'notistack';
 import {
   resetData,
   saveNewNote,
@@ -18,7 +19,7 @@ function App() {
   let [entryBarToggle, setEntryBarToggle] = useState(false);
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
-
+  console.log(window)
   useEffect(() => {
     content = "";
     if (getNoteContentByName(currentNoteName)) {
@@ -51,7 +52,7 @@ function App() {
           &#xE8BB;
         </button>
       </div>
-
+      <SnackbarProvider maxSnack={3}>
       <div
         className="App"
         onKeyDown={(e) => {
@@ -119,6 +120,7 @@ function App() {
         </div>
         <div className="devBuildNotifier">Development build</div>
       </div>
+      </SnackbarProvider>
     </>
   );
 }
