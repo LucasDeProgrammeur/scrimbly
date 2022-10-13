@@ -1,14 +1,49 @@
 import goToPositionContentEditable from "./goToPositionContentEditable";
 
+export default function checkForLineFormatting(
+  editable: Element,
+  content: string,
+  nodeType: string,
+  event: React.KeyboardEvent<HTMLDivElement>,
+  setContent: any
+) {
 
-export default function insertHTMLNode (editable: Element, content: string, nodeType: string, event: React.KeyboardEvent<HTMLDivElement>, setContent: any) {
-event.preventDefault();
-setContent(content.substring(0, content.length - 3) + "h");
-editable.innerHTML = editable.innerHTML.substring(0, editable.innerHTML.length - 2)
-let newElement = document.createElement(nodeType);
-document.getElementsByClassName("editable")[0].appendChild(newElement);
-editable.lastChild?.previousSibling?.remove();
-newElement.textContent = "- "
-goToPositionContentEditable(editable)
+
+  let elementTypes = [
+    {syntax: "-!", element: "h1"},
+    {syntax: "-@", element: "h2"},
+    {syntax: "-#", element: "h3"},
+    {syntax: "-cb", element: "input", elementType: "checkbox"}
+  ];
+
+  let newElement = document.createElement(nodeType);
+
+  let children = editable.querySelectorAll("div");
+
+  children.forEach(e => {
+
+    elementTypes.forEach(typesE => {
+      if (e.innerText === typesE.syntax) {
+        e.innerText = "";
+        let newElement = document.createElement(typesE.element);
+        if (typesE.elementType !== null) newElement.setAttribute("type", "checkbox");
+        newElement.innerHTML = "&#8203;";
+        e.appendChild(newElement)
+  
+        let range = document.createRange();
+        range.setStartAfter(newElement)
+        window.getSelection()?.removeAllRanges()
+        window.getSelection()?.addRange(range)
+      }
+    })
+  })
+
+    //let child = editable.appendChild(newElement);
+
+  
+  
+
+  newElement.textContent = "- ";
+ // goToPositionContentEditable(editable);
 }
 

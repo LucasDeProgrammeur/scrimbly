@@ -8,6 +8,15 @@ import {ipcRenderer} from "electron";
 import closeApp from "./ipcControls";
 import wrapContent from "./helpers/wrapContent";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
+import EntryBar from "./components/EntryBar";
+import {
+  getData,
+  resetData,
+  saveNewNote,
+  saveSpecificNote,
+  getNoteContentByName,
+} from "./helpers/io/storageFunctions";
+import checkForLineFormatting from "./helpers/insertHTMLNode";
 // import initDB from "./io/dbFunctions";
 
 function App() {
@@ -21,44 +30,42 @@ function App() {
     
   }, [])
 
-  const formatDocument = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    const currentKey = event.key;
-    const keyCombo = previousKey + currentKey;
+  // const formatDocument = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  //   const currentKey = event.key;
+  //   const keyCombo = previousKey + currentKey;
+  //   console.log(keyCombo)
+  //   switch (keyCombo) {
+  //     case "-!":
+  //       insertHTMLNode(
+  //         document.getElementsByClassName("editable")[0],
+  //         content,
+  //         "h1",
+  //         event,
+  //         setContent
+  //       );
+  //       break;
+  //     case "-@":
+  //       insertHTMLNode(
+  //         document.getElementsByClassName("editable")[0],
+  //         content,
+  //         "h2",
+  //         event,
+  //         setContent
+  //       );
+  //       break;
+  //     case "-#":
+  //       insertHTMLNode(
+  //         document.getElementsByClassName("editable")[0],
+  //         content,
+  //         "h3",
+  //         event,
+  //         setContent
+  //       );
+  //       break;
+  //   }
 
-    console.log("Combo: " + keyCombo);
-
-    switch (keyCombo) {
-      case "-!":
-        insertHTMLNode(
-          document.getElementsByClassName("editable")[0],
-          content,
-          "h1",
-          event,
-          setContent
-        );
-        break;
-      case "-@":
-        insertHTMLNode(
-          document.getElementsByClassName("editable")[0],
-          content,
-          "h2",
-          event,
-          setContent
-        );
-        break;
-      case "-#":
-        insertHTMLNode(
-          document.getElementsByClassName("editable")[0],
-          content,
-          "h3",
-          event,
-          setContent
-        );
-        break;
-    }
-
-    if (currentKey !== "Shift") setPreviousKey(currentKey);
-  };
+    // if (currentKey !== "Shift") setPreviousKey(currentKey);
+  // };
 
   return (
     <>
@@ -95,7 +102,9 @@ function App() {
             console.log(target.innerHTML);
             target.focus();
             let val = target?.innerHTML;
-            formatDocument(e);
+            // formatDocument(e);
+            checkForLineFormatting(target, content, "h1", e, setContent);
+            checkForInlineFormatting(target);
             setContent(val);
             localStorage.setItem("data", content);
             checkForInlineFormatting(target);
