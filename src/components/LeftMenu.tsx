@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getData, removeNote } from "../helpers/io/storageFunctions";
 import { useSnackbar } from "notistack";
 import { noteList, note } from "../types/ioTypes";
@@ -22,6 +22,7 @@ const LeftMenu = ({
     if (!fetchedNotes.length) setFetchedNotes(getData().notes);
   }, []);
   const { enqueueSnackbar } = useSnackbar();
+  const [noteSearchQuery, setNoteSearchQuery] = useState("");
 
   return (
     <div className="leftMenu">
@@ -45,39 +46,54 @@ const LeftMenu = ({
         >
           &#xE78C;
         </button>
-        <button onClick={() => {
-          controls.import().then(() => {
-            enqueueSnackbar("Data imported");
-            setFetchedNotes(getData().notes);
-          })
-        }}>
+        <button
+          onClick={() => {
+            controls.import().then(() => {
+              enqueueSnackbar("Data imported");
+              setFetchedNotes(getData().notes);
+            });
+          }}
+        >
           &#xE8E5;
         </button>
       </div>
+      <input
+        type="text"
+        placeholder="Note search"
+        onChange={(e) => {
+          setNoteSearchQuery(e.target.value);
+        }}
+      />
       <div className="fileList">
-        {fetchedNotes.map((e: note, i: Number) => {
-          if (e.name === currentNoteName) {
+        {fetchedNotes
+          .filter(
+            (e) =>
+              e.name.toLowerCase().includes(noteSearchQuery.toLowerCase()) ||
+              e.name === currentNoteName
+          )
+          .map((e: note, i: Number) => {
+            if (e.name === currentNoteName) {
+              return (
+                <div
+                  key={i as React.Key}
+                  onClick={() => setCurrentNoteName(e.name)}
+                  className="fileEntry selectedEntry"
+                >
+                  {e.name}
+                </div>
+              );
+            }
+
             return (
               <div
                 key={i as React.Key}
                 onClick={() => setCurrentNoteName(e.name)}
-                className="fileEntry selectedEntry"
+                className="fileEntry"
               >
                 {e.name}
               </div>
             );
-          }
-
-          return (
-            <div
-              key={i as React.Key}
-              onClick={() => setCurrentNoteName(e.name)}
-              className="fileEntry"
-            >
-              {e.name}
-            </div>
-          );
-        })}
+          })}
       </div>
     </div>
   );

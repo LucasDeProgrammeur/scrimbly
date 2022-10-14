@@ -66,6 +66,15 @@
   box-shadow: -37px 40px 90px 1px;
 }
 
+.leftMenu input[type="text"] {
+  background-color: rgb(71, 71, 82);
+  border: 1px solid rgb(81, 81, 95);
+  width: calc(100% - 22px);
+  padding: 10px;
+  outline: none;
+  color: white;
+}
+
 .topBar {
   height: 32px;
   width: calc(100% - 10px);
