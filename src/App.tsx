@@ -23,16 +23,17 @@ function App() {
   let [bottomBarText, setBottomBarText] = useState("");
   let [charAmount, setCharAmount] = useState("");
   let [wordAmount, setWordAmount] = useState("");
-  console.log(window);
   useEffect(() => {
     content = "";
+    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
     if (getNoteContentByName(currentNoteName)) {
       content = getNoteContentByName(currentNoteName);
     } else {
       setCurrentNoteName("");
     }
 
-    document.getElementsByClassName("editable")[0].innerHTML = content;
+    target.innerHTML = content;
+    handleCounter(target, setCharAmount, setWordAmount);
   }, [currentNoteName]);
 
   useEffect(() => {
@@ -99,10 +100,10 @@ function App() {
                 e.preventDefault();
                 return;
               }
-
+              
               const target = e.target as HTMLInputElement;
-
               handleCounter(target, setCharAmount, setWordAmount);
+
               if (target.innerHTML === "<br>" || target.innerHTML === "") {
                 e.preventDefault();
                 if (e.key.length === 1) {
@@ -112,7 +113,7 @@ function App() {
                   target.innerHTML = "<div><br></div>";
                 }
               }
-
+              
               target.focus();
               let val = target?.innerHTML;
               checkForLineFormatting(target, content, "h1", e, setContent);
@@ -128,7 +129,9 @@ function App() {
           </div>
           <div className="bottomBar">
             <p className="bottomBarInfo">{bottomBarText}</p>
-            <p className="charNumbers">Words: {wordAmount} | Characters: {charAmount}</p>
+            <p className="charNumbers">
+              Words: {wordAmount} | Characters: {charAmount}
+            </p>
           </div>
           <div className="devBuildNotifier">Development build</div>
         </div>
