@@ -17,7 +17,7 @@
 
 .rightContainer {
   height: 100%;
-  width: calc(100% - 220px);
+  width: calc(100% - 230px);
 }
 
 .editable {
@@ -60,15 +60,15 @@
 
 .leftMenu {
   background-color: rgb(42, 42, 48);
-  width: 200px;
   height: 100%;
+  width: 210px;
   float: left;
   box-shadow: -37px 40px 90px 1px;
 }
 
 .topBar {
   height: 32px;
-  width: 100%;
+  width: calc(100% - 10px);
   padding: 5px;
   background-color: rgb(54, 54, 59);
 }
@@ -83,6 +83,14 @@
   border-radius: 8px;
   border: 1px solid rgb(38, 38, 44);
   margin: 0 4px;
+}
+
+.topBar button:hover {
+  background-color: rgb(42, 42, 48);
+}
+
+.topBar button:focus {
+  background-color: rgb(61, 61, 70);
 }
 
 .App-link {

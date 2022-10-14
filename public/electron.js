@@ -56,8 +56,12 @@ ipcMain.handle('close', () => {
   BrowserWindow.getFocusedWindow().close();
 })
 
-ipcMain.handle('fileOpen', () => {
+ipcMain.handle('fileOpenExport', () => {
   return dialog.showOpenDialog({properties: ['openDirectory']});
+})
+
+ipcMain.handle('fileOpenImport', () => {
+  return dialog.showOpenDialog({properties: ['openFile']});
 })
 
 
