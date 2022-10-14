@@ -4,7 +4,7 @@ import setEndOfContenteditable from "./helpers/setEndofContenteditable";
 import LeftMenu from "./components/LeftMenu";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
 import EntryBar from "./components/EntryBar";
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from "notistack";
 import {
   resetData,
   saveNewNote,
@@ -12,6 +12,7 @@ import {
   getNoteContentByName,
 } from "./helpers/io/storageFunctions";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
+import handleCounter from "./helpers/handleCounter";
 // import initDB from "./io/dbFunctions";
 
 function App() {
@@ -19,7 +20,10 @@ function App() {
   let [entryBarToggle, setEntryBarToggle] = useState(false);
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
-  console.log(window)
+  let [bottomBarText, setBottomBarText] = useState("");
+  let [charAmount, setCharAmount] = useState("");
+  let [wordAmount, setWordAmount] = useState("");
+  console.log(window);
   useEffect(() => {
     content = "";
     if (getNoteContentByName(currentNoteName)) {
@@ -32,8 +36,8 @@ function App() {
   }, [currentNoteName]);
 
   useEffect(() => {
-    if (!fetchedNotes.length) setCurrentNoteName("")
-  }, [fetchedNotes])
+    if (!fetchedNotes.length) setCurrentNoteName("");
+  }, [fetchedNotes]);
 
   return (
     <>
@@ -52,74 +56,82 @@ function App() {
           &#xE8BB;
         </button>
       </div>
-      <SnackbarProvider autoHideDuration={2000}  maxSnack={3}>
-      <div
-        className="App"
-        onKeyDown={(e) => {
-          if (e.key === "Home") {
-            resetData();
-          }
-          if (e.key === "Escape") {
-            setEntryBarToggle(false);
-          }
-        }}
-      >
-        {entryBarToggle && (
-          <EntryBar
-            setEntryBarToggle={setEntryBarToggle}
-            defaultText="Enter new note name..."
-            fireAction={(text: string) => {
-              saveNewNote(text);
-              setCurrentNoteName(text);
-              document.getElementsByClassName("editable")[0].focus();
-            }}
+      <SnackbarProvider autoHideDuration={2000} maxSnack={3}>
+        <div
+          className="App"
+          onKeyDown={(e) => {
+            if (e.key === "Home") {
+              resetData();
+            }
+            if (e.key === "Escape") {
+              setEntryBarToggle(false);
+            }
+          }}
+        >
+          {entryBarToggle && (
+            <EntryBar
+              setEntryBarToggle={setEntryBarToggle}
+              defaultText="Enter new note name..."
+              fireAction={(text: string) => {
+                saveNewNote(text);
+                setCurrentNoteName(text);
+                document.getElementsByClassName("editable")[0].focus();
+              }}
+              fetchedNotes={fetchedNotes}
+              setFetchedNotes={setFetchedNotes}
+            />
+          )}
+          <LeftMenu
+            setEntrybarToggle={setEntryBarToggle}
+            setCurrentNoteName={setCurrentNoteName}
+            currentNoteName={currentNoteName}
             fetchedNotes={fetchedNotes}
             setFetchedNotes={setFetchedNotes}
+            setBottomBarText={setBottomBarText}
           />
-        )}
-        <LeftMenu
-          setEntrybarToggle={setEntryBarToggle}
-          setCurrentNoteName={setCurrentNoteName}
-          currentNoteName={currentNoteName}
-          fetchedNotes={fetchedNotes}
-          setFetchedNotes={setFetchedNotes}
-        />
 
-        <div
-          contentEditable={currentNoteName ? "true" : "false"}
-          suppressContentEditableWarning={true}
-          onKeyUp={(e) => {
-            if (entryBarToggle) {
-              document.getElementById("entryBar")?.focus();
-              e.preventDefault();
-              return;
-            }
-
-            const target = e.target as HTMLInputElement;
-
-            if (target.innerHTML === "<br>" || target.innerHTML === "") {
-              e.preventDefault();
-              if (e.key.length === 1) {
-                target.innerHTML = "<div>" + e.key + "</div>";
-                setEndOfContenteditable(e.target);
-              } else {
-                target.innerHTML = "<div><br></div>";
+          <div
+            contentEditable={currentNoteName ? "true" : "false"}
+            suppressContentEditableWarning={true}
+            onKeyUp={(e) => {
+              if (entryBarToggle) {
+                document.getElementById("entryBar")?.focus();
+                e.preventDefault();
+                return;
               }
-            }
 
-            target.focus();
-            let val = target?.innerHTML;
-            checkForLineFormatting(target, content, "h1", e, setContent);
-            checkForInlineFormatting(target);
-            setContent(val);
-            saveSpecificNote(currentNoteName, content);
-          }}
-          className="editable rightContainer"
-        >
-           <div><br></br></div>
+              const target = e.target as HTMLInputElement;
+
+              handleCounter(target, setCharAmount, setWordAmount);
+              if (target.innerHTML === "<br>" || target.innerHTML === "") {
+                e.preventDefault();
+                if (e.key.length === 1) {
+                  target.innerHTML = "<div>" + e.key + "</div>";
+                  setEndOfContenteditable(e.target);
+                } else {
+                  target.innerHTML = "<div><br></div>";
+                }
+              }
+
+              target.focus();
+              let val = target?.innerHTML;
+              checkForLineFormatting(target, content, "h1", e, setContent);
+              checkForInlineFormatting(target);
+              setContent(val);
+              saveSpecificNote(currentNoteName, content);
+            }}
+            className="editable rightContainer"
+          >
+            <div>
+              <br></br>
+            </div>
+          </div>
+          <div className="bottomBar">
+            <p className="bottomBarInfo">{bottomBarText}</p>
+            <p className="charNumbers">Words: {wordAmount} | Characters: {charAmount}</p>
+          </div>
+          <div className="devBuildNotifier">Development build</div>
         </div>
-        <div className="devBuildNotifier">Development build</div>
-      </div>
       </SnackbarProvider>
     </>
   );

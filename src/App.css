@@ -16,7 +16,7 @@
 
 
 .rightContainer {
-  height: 100%;
+  height: calc(100% - 80px);
   width: calc(100% - 230px);
 }
 
@@ -60,10 +60,9 @@
 
 .leftMenu {
   background-color: rgb(42, 42, 48);
-  height: 100%;
+  height: calc(100% - 55px);
   width: 210px;
   float: left;
-  box-shadow: -37px 40px 90px 1px;
 }
 
 .leftMenu input[type="text"] {
@@ -100,6 +99,30 @@
 
 .topBar button:focus {
   background-color: rgb(61, 61, 70);
+}
+
+.bottomBar {
+  height: 25px;
+  background-color: rgb(36, 36, 41);
+  width: calc(100% - 20px); 
+  padding: 0 10px;
+  float: right;
+}
+
+.bottomBar p {
+  margin: 0;
+  color: white;
+  font-size: 12px;
+  height: 25px;
+  line-height: 23px;
+}
+
+.bottomBarInfo {
+  float: left;
+}
+
+.charNumbers {
+  float: right;
 }
 
 .App-link {
@@ -165,7 +188,7 @@
 .devBuildNotifier {
   color: white;
   position: absolute;
-  bottom: 20px;
+  bottom: 40px;
   right: 20px;
   opacity: 0.5;
 }

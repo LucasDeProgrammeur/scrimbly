@@ -9,6 +9,7 @@ interface LeftMenuProps {
   currentNoteName: string;
   fetchedNotes: noteList;
   setFetchedNotes: any;
+  setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const LeftMenu = ({
@@ -17,6 +18,7 @@ const LeftMenu = ({
   currentNoteName,
   fetchedNotes,
   setFetchedNotes,
+  setBottomBarText,
 }: LeftMenuProps) => {
   useEffect(() => {
     if (!fetchedNotes.length) setFetchedNotes(getData().notes);
@@ -26,9 +28,16 @@ const LeftMenu = ({
 
   return (
     <div className="leftMenu">
-      <div className="topBar">
-        <button onClick={() => setEntrybarToggle(true)}>&#xE710;</button>
+      <div className="topBar" onMouseLeave={() => setBottomBarText("")}>
         <button
+          onMouseEnter={() => setBottomBarText("New Note")}
+          onMouseLeave={() => setBottomBarText("")}
+          onClick={() => setEntrybarToggle(true)}
+        >
+          &#xE710;
+        </button>
+        <button
+          onMouseEnter={() => setBottomBarText("Delete Note")}
           onClick={() => {
             let newValue = removeNote(currentNoteName);
             setFetchedNotes(newValue.notes);
@@ -36,8 +45,13 @@ const LeftMenu = ({
         >
           &#xE74D;
         </button>
-        <button>&#xE897;</button>
         <button
+          onMouseEnter={() => setBottomBarText("Help")}
+        >
+          &#xE897;
+        </button>
+        <button
+          onMouseEnter={() => setBottomBarText("Export data")}
           onClick={() => {
             controls.export().then(() => {
               enqueueSnackbar("Data exported");
@@ -47,6 +61,7 @@ const LeftMenu = ({
           &#xE78C;
         </button>
         <button
+          onMouseEnter={() => setBottomBarText("Import data")}
           onClick={() => {
             controls.import().then(() => {
               enqueueSnackbar("Data imported");

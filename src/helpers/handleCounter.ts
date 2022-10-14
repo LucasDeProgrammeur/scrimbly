@@ -1,0 +1,7 @@
+const handleCounter = (target: HTMLElement, setCharAmount: any, setWordAmount: any) => {
+    let text = target.innerText;
+    setCharAmount(text.length);
+    setWordAmount(text.split(" ").length)
+}
+
+export default handleCounter;
