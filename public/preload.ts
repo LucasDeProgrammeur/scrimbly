@@ -16,7 +16,6 @@ contextBridge.exposeInMainWorld("controls", {
   },
   export: async () => {
     let path = await ipcRenderer.invoke("fileOpenExport");
-    console.log(path.filePaths[0])
     fs.writeFileSync(
       path.filePaths[0] + "\\export.txt",
       localStorage.getItem("data") || JSON.stringify(defaultData)
@@ -25,7 +24,6 @@ contextBridge.exposeInMainWorld("controls", {
   import: async () => {
     let path = await ipcRenderer.invoke("fileOpenImport")
     let text = fs.readFileSync(path.filePaths[0])
-    console.log(text)
     localStorage.setItem("data", text)
   }
   // we can also expose variables, not just functions
