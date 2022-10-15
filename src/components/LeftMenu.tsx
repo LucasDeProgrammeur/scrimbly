@@ -45,11 +45,7 @@ const LeftMenu = ({
         >
           &#xE74D;
         </button>
-        <button
-          onMouseEnter={() => setBottomBarText("Help")}
-        >
-          &#xE897;
-        </button>
+        <button onMouseEnter={() => setBottomBarText("Help")}>&#xE897;</button>
         <button
           onMouseEnter={() => setBottomBarText("Export data")}
           onClick={() => {
