@@ -1,3 +1,5 @@
+import setRangeAfter from "./setRangeAfter";
+
 export default function checkForLineFormatting(
   editable: Element,
   content: string,
@@ -24,11 +26,8 @@ export default function checkForLineFormatting(
           newElement.setAttribute("type", "checkbox");
         newElement.innerHTML = previousText === "" ? "&#8203;" : previousText;
         e.appendChild(newElement);
-
-        let range = document.createRange();
-        range.setStartAfter(newElement);
-        window.getSelection()?.removeAllRanges();
-        window.getSelection()?.addRange(range);
+        setRangeAfter(newElement);
+        
       }
     });
   });

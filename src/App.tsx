@@ -13,6 +13,7 @@ import {
 } from "./helpers/io/storageFunctions";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
 import handleCounter from "./helpers/handleCounter";
+import getNodeContentEditable from "./helpers/getNodeContentEditable";
 // import initDB from "./io/dbFunctions";
 
 function App() {
@@ -94,7 +95,16 @@ function App() {
           <div
             contentEditable={currentNoteName ? "true" : "false"}
             suppressContentEditableWarning={true}
+            onKeyDown={(e) => {
+              if (getNodeContentEditable()?.parentElement?.className !== "editable") {
+                console.log("inside bold text")
+                e.preventDefault();
+                return;
+              }
+            }}
             onKeyUp={(e) => {
+              console.log(getNodeContentEditable()?.parentElement?.className)
+
               if (entryBarToggle) {
                 document.getElementById("entryBar")?.focus();
                 e.preventDefault();
