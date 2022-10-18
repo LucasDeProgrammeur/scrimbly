@@ -24,7 +24,7 @@ function App() {
   let [bottomBarText, setBottomBarText] = useState("");
   let [charAmount, setCharAmount] = useState("");
   let [wordAmount, setWordAmount] = useState("");
-
+  let [maximized, setMaximized] = useState(false);
   let cbox = document.querySelectorAll("input");
 
   cbox.forEach((cb) => {
@@ -58,7 +58,7 @@ function App() {
   useEffect(() => {
     if (!fetchedNotes.length) setCurrentNoteName("");
   }, [fetchedNotes]);
-  console.log(currentNoteName);
+
   return (
     <>
       <div className="draggable">
@@ -69,8 +69,15 @@ function App() {
         <button onClick={() => controls.minimize()} id="minimize">
           &#xE921;
         </button>
-        <button onClick={() => controls.maximize()} id="maximize">
-          &#xE922;
+        <button
+          onClick={() => {
+
+            maximized ? controls.restore() : controls.maximize();
+            setMaximized(!maximized);
+          }}
+          id="maximize"
+        >
+          {maximized ? "" : ""}
         </button>
         <button onClick={() => controls.close()} id="close">
           &#xE8BB;

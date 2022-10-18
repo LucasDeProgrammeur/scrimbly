@@ -56,6 +56,16 @@ ipcMain.handle('close', () => {
   BrowserWindow.getFocusedWindow().close();
 })
 
+ipcMain.handle('restore', () => {
+  BrowserWindow.getFocusedWindow().restore();
+})
+
+ipcMain.handle('isMaximized', () => {
+  return BrowserWindow.getFocusedWindow().isMaximized();
+})
+
+
+
 ipcMain.handle('fileOpenExport', () => {
   return dialog.showOpenDialog({properties: ['openDirectory']});
 })

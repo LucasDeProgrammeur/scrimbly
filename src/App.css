@@ -174,6 +174,13 @@
   background-color: rgb(45, 45, 65);
 }
 
+.windowControls button div {
+  margin: 0;
+  padding: 0;
+  height: inherit;
+  width: inherit;
+}
+
 .fileEntry {
   color: white;
   padding: 10px;

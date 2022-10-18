@@ -14,6 +14,9 @@ contextBridge.exposeInMainWorld("controls", {
   close: () => {
     ipcRenderer.invoke("close");
   },
+  restore: () => {
+    ipcRenderer.invoke("restore");
+  },
   export: async () => {
     let path = await ipcRenderer.invoke("fileOpenExport");
     fs.writeFileSync(
@@ -28,3 +31,9 @@ contextBridge.exposeInMainWorld("controls", {
   }
   // we can also expose variables, not just functions
 });
+
+contextBridge.exposeInMainWorld("controlsProperties", {
+  isMaximized: async () => {
+   return awaitipcRenderer.invoke("isMaximized");
+  }
+})
