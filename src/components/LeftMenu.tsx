@@ -22,7 +22,7 @@ const LeftMenu = ({
 }: LeftMenuProps) => {
   useEffect(() => {
     if (!fetchedNotes.length) setFetchedNotes(getData().notes);
-  }, []);
+  });
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
 

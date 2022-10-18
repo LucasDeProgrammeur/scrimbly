@@ -1,6 +1,6 @@
 import getNodeContentEditable from "./getNodeContentEditable";
 import goToPositionContentEditable from "./goToPositionContentEditable";
-import setRangeAfter from "./setRangeAfter";
+import { setRangeAfter } from "./setRangeAfter";
 
 const checkForInlineFormatting = (editable: Element) => {
   const replaceableSymbols = [
@@ -9,9 +9,6 @@ const checkForInlineFormatting = (editable: Element) => {
   ];
 
   replaceableSymbols.forEach((e) => {
-    let locs = locations(e.key, editable.innerHTML);
-    console.log(getNodeContentEditable()?.childNodes.length);
-
     getNodeContentEditable()?.childNodes.forEach((el, i) => {
       let keySplit = e.key.split("").join("\\");
 
@@ -21,6 +18,7 @@ const checkForInlineFormatting = (editable: Element) => {
           new RegExp(`(?<!\\${keySplit})(\\${keySplit})([^\\${keySplit}]+\\${keySplit})`, "g")
         )
       ) {
+        //debugger;
         let previousTextBegin = el.textContent.split(e.key)[0];
         let previousTextEnd = el.textContent.split(e.key)[2];
         let newContent = el.textContent.split(e.key)[1];
@@ -28,6 +26,7 @@ const checkForInlineFormatting = (editable: Element) => {
         newElement.textContent = newContent;
 
         getNodeContentEditable()?.replaceChild(newElement, el);
+        console.log(newElement.parentElement)
         newElement.insertAdjacentHTML(
           "beforebegin",
           previousTextBegin + "&#8203;"
@@ -36,17 +35,6 @@ const checkForInlineFormatting = (editable: Element) => {
         setRangeAfter(newElement);
       }
     });
-    //getNodeContentEditable()?.appendChild(newElement)
-
-    // editable.innerHTML =
-    //   editable.innerHTML.substring(0, locs[i - 1]) +
-    //   "<" +
-    //   e.element +
-    //   " classname='boldText'>" +
-    //   editable.innerHTML.substring(locs[i - 1] + e.key.length, el) +
-    //   "</" +
-    //   e.element +
-    //   editable.innerHTML.substring(el + e.key.length, editable.innerHTML.length);
   });
 };
 

@@ -1,4 +1,4 @@
-import setRangeAfter from "./setRangeAfter";
+import { setRangeAfter, setRangeOn } from "./setRangeAfter";
 
 export default function checkForLineFormatting(
   editable: Element,
@@ -11,7 +11,13 @@ export default function checkForLineFormatting(
     { syntax: "-!", element: "h1" },
     { syntax: "-@", element: "h2" },
     { syntax: "-#", element: "h3" },
-    { syntax: "-cb", element: "input", elementType: "checkbox" },
+    {
+      syntax: "-cb",
+      element: "input",
+      properties: [
+        { attrName: "type", val: "checkbox" },
+      ],
+    },
   ];
 
   let children = editable.querySelectorAll("div");
@@ -19,15 +25,18 @@ export default function checkForLineFormatting(
   children.forEach((e) => {
     elementTypes.forEach((typesE) => {
       if (e.innerText.includes(typesE.syntax)) {
-        const previousText = e.innerText.replace(typesE.syntax, "");
-        e.innerText = "";
         let newElement = document.createElement(typesE.element);
-        if (typesE.elementType !== undefined)
-          newElement.setAttribute("type", "checkbox");
-        newElement.innerHTML = previousText === "" ? "&#8203;" : previousText;
+        newElement.innerText = e.innerText.replaceAll(typesE.syntax, "");
+        if (newElement.innerText === "") newElement.innerHTML = "&#8203;";
+        e.textContent = "";
         e.appendChild(newElement);
-        setRangeAfter(newElement);
-        
+
+        if (typesE.properties) {
+          typesE.properties.forEach((property) => {
+            newElement.setAttribute(property.attrName, property.val);
+          });
+        }
+        setRangeOn(newElement);
       }
     });
   });

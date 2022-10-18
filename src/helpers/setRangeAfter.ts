@@ -1,30 +1,20 @@
 const setRangeAfter = (newElement: HTMLElement) => {
   let range = document.createRange();
-//   console.log(
-//     getLengthChars(
-//       Array.prototype.indexOf.call(
-//         newElement.parentElement?.children,
-//         newElement
-//       ),
-//       newElement.parentElement?.children.length
-//     )
-//   );
-console.log(newElement)
-  range.setStart(
-    newElement.parentNode,
-    3
-  );
+  // range.setStartAfter(newElement);
+
+  range.setStart(newElement.nextSibling, 1);
   window.getSelection()?.removeAllRanges();
   window.getSelection()?.addRange(range);
 };
 
-const getLengthChars = (newSiblingIndex: number, children: HTMLCollection) => {
-  let count = 0;
-  for (let i = 0; i <= newSiblingIndex; i++) {
-    count ++;
-  }
 
-  return count;
-};
+const setRangeOn = (newElement: HTMLElement) => {
+  let range = document.createRange();
+  // range.setStartAfter(newElement);
 
-export default setRangeAfter;
+  range.setStart(newElement, 1);
+  window.getSelection()?.removeAllRanges();
+  window.getSelection()?.addRange(range);
+}
+
+export { setRangeAfter, setRangeOn };

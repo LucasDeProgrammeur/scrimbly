@@ -24,23 +24,41 @@ function App() {
   let [bottomBarText, setBottomBarText] = useState("");
   let [charAmount, setCharAmount] = useState("");
   let [wordAmount, setWordAmount] = useState("");
+
+  let cbox = document.querySelectorAll("input");
+
+  cbox.forEach((cb) => {
+    cb.addEventListener("click", () => {
+      console.log("change check");
+      cb.checked
+        ? cb.setAttribute("checked", "")
+        : cb.removeAttribute("checked");
+      setContent(document.getElementsByClassName("editable")[0].innerHTML);
+    });
+  });
+
   useEffect(() => {
-    content = "";
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
-    if (getNoteContentByName(currentNoteName)) {
-      content = getNoteContentByName(currentNoteName);
+    if (getNoteContentByName(currentNoteName) !== null) {
+      setContent(getNoteContentByName(currentNoteName));
     } else {
       setCurrentNoteName("");
     }
-
-    target.innerHTML = content;
-    handleCounter(target, setCharAmount, setWordAmount);
+    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+    target.innerHTML = getNoteContentByName(currentNoteName);
   }, [currentNoteName]);
+
+  useEffect(() => {
+    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+    //
+
+    handleCounter(target, setCharAmount, setWordAmount);
+    saveSpecificNote(currentNoteName, content);
+  }, [content, currentNoteName]);
 
   useEffect(() => {
     if (!fetchedNotes.length) setCurrentNoteName("");
   }, [fetchedNotes]);
-
+  console.log(currentNoteName);
   return (
     <>
       <div className="draggable">
@@ -95,21 +113,23 @@ function App() {
           <div
             contentEditable={currentNoteName ? "true" : "false"}
             suppressContentEditableWarning={true}
+            onClick={(e) => {
+              if (!currentNoteName) return;
+              setContent(
+                document.getElementsByClassName("editable")[0].innerHTML
+              );
+              saveSpecificNote(currentNoteName, content);
+            }}
             onKeyDown={(e) => {
-              console.log(getNodeContentEditable()?.nodeName);
-              if (getNodeContentEditable()?.nodeName === "B" || getNodeContentEditable()?.nodeName === "EM") {
-
+              if (
+                getNodeContentEditable()?.nodeName === "B" ||
+                getNodeContentEditable()?.nodeName === "EM"
+              ) {
                 if (e.key === "Delete" || e.key === "Backspace") {
-                  //e.preventDefault();
-                  const target = e.target as HTMLInputElement;
-                  console.log("inside bold text")
-                  // let range = document.createRange();
-                  // let textNode = document.createTextNode(getNodeContentEditable()?.textContent);
-                  getNodeContentEditable()?.parentElement.removeChild(getNodeContentEditable());
+                  getNodeContentEditable()?.parentElement.removeChild(
+                    getNodeContentEditable()
+                  );
                 }
-               
-
-                //getNodeContentEditable()?.appendChild(textNode);
               }
             }}
             onKeyUp={(e) => {
@@ -118,7 +138,7 @@ function App() {
                 e.preventDefault();
                 return;
               }
-              
+
               const target = e.target as HTMLInputElement;
               handleCounter(target, setCharAmount, setWordAmount);
 
@@ -131,7 +151,7 @@ function App() {
                   target.innerHTML = "<div><br></div>";
                 }
               }
-              
+
               target.focus();
               let val = target?.innerHTML;
               checkForLineFormatting(target, content, "h1", e, setContent);
