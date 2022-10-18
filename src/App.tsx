@@ -96,15 +96,23 @@ function App() {
             contentEditable={currentNoteName ? "true" : "false"}
             suppressContentEditableWarning={true}
             onKeyDown={(e) => {
-              if (getNodeContentEditable()?.parentElement?.className !== "editable") {
-                console.log("inside bold text")
-                e.preventDefault();
-                return;
+              console.log(getNodeContentEditable()?.nodeName);
+              if (getNodeContentEditable()?.nodeName === "B" || getNodeContentEditable()?.nodeName === "EM") {
+
+                if (e.key === "Delete" || e.key === "Backspace") {
+                  //e.preventDefault();
+                  const target = e.target as HTMLInputElement;
+                  console.log("inside bold text")
+                  // let range = document.createRange();
+                  // let textNode = document.createTextNode(getNodeContentEditable()?.textContent);
+                  getNodeContentEditable()?.parentElement.removeChild(getNodeContentEditable());
+                }
+               
+
+                //getNodeContentEditable()?.appendChild(textNode);
               }
             }}
             onKeyUp={(e) => {
-              console.log(getNodeContentEditable()?.parentElement?.className)
-
               if (entryBarToggle) {
                 document.getElementById("entryBar")?.focus();
                 e.preventDefault();

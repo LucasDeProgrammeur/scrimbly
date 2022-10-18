@@ -11,8 +11,8 @@ const setRangeAfter = (newElement: HTMLElement) => {
 //   );
 console.log(newElement)
   range.setStart(
-    newElement,
-    1
+    newElement.parentNode,
+    3
   );
   window.getSelection()?.removeAllRanges();
   window.getSelection()?.addRange(range);
