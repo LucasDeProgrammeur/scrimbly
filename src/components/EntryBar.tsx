@@ -17,6 +17,7 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   return (
     <div className="entryBar" id="entryBar">
       <input
+      className="entryBarInput"
         onKeyDown={(e) => {
           const target = e.target as HTMLInputElement;
           if (e.key === "Enter") {

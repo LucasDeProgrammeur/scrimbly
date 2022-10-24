@@ -1,5 +1,5 @@
 const handleCounter = (target: HTMLElement, setCharAmount: any, setWordAmount: any) => {
-    let text = target.innerText.replace(/\u200B/g, "");
+    let text = target.innerText? target.innerText.replace(/\u200B/g, "") : "";
     setCharAmount(text.length);
     setWordAmount(text.split(" ").length)
 }

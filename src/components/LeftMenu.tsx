@@ -20,16 +20,17 @@ const LeftMenu = ({
   setFetchedNotes,
   setBottomBarText,
 }: LeftMenuProps) => {
-  useEffect(() => {
-    if (!fetchedNotes.length) setFetchedNotes(getData().notes);
-  });
+
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
-
+  useEffect(() => {
+    setFetchedNotes(getData().notes);
+  }, []);
   return (
     <div className="leftMenu">
       <div className="topBar" onMouseLeave={() => setBottomBarText("")}>
         <button
+          className="newNoteButton"
           onMouseEnter={() => setBottomBarText("New Note")}
           onMouseLeave={() => setBottomBarText("")}
           onClick={() => setEntrybarToggle(true)}
@@ -37,6 +38,7 @@ const LeftMenu = ({
           &#xE710;
         </button>
         <button
+          className="deleteNoteButton"
           onMouseEnter={() => setBottomBarText("Delete Note")}
           onClick={() => {
             let newValue = removeNote(currentNoteName);

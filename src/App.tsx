@@ -14,6 +14,7 @@ import {
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
 import handleCounter from "./helpers/handleCounter";
 import getNodeContentEditable from "./helpers/getNodeContentEditable";
+import { setRangeAfter } from "./helpers/setRangeAfter";
 // import initDB from "./io/dbFunctions";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
   });
 
   useEffect(() => {
+    if (currentNoteName === "") return;
     if (getNoteContentByName(currentNoteName) !== null) {
       setContent(getNoteContentByName(currentNoteName));
     } else {
@@ -50,9 +52,11 @@ function App() {
   useEffect(() => {
     let target = document.getElementsByClassName("editable")[0] as HTMLElement;
     //
+    if (currentNoteName) {
+      handleCounter(target, setCharAmount, setWordAmount);
+      saveSpecificNote(currentNoteName, content);
+    }
 
-    handleCounter(target, setCharAmount, setWordAmount);
-    saveSpecificNote(currentNoteName, content);
   }, [content, currentNoteName]);
 
   useEffect(() => {
@@ -126,18 +130,6 @@ function App() {
                 document.getElementsByClassName("editable")[0].innerHTML
               );
               saveSpecificNote(currentNoteName, content);
-            }}
-            onKeyDown={(e) => {
-              if (
-                getNodeContentEditable()?.nodeName === "B" ||
-                getNodeContentEditable()?.nodeName === "EM"
-              ) {
-                if (e.key === "Delete" || e.key === "Backspace") {
-                  getNodeContentEditable()?.parentElement.removeChild(
-                    getNodeContentEditable()
-                  );
-                }
-              }
             }}
             onKeyUp={(e) => {
               if (entryBarToggle) {
