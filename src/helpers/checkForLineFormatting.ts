@@ -1,4 +1,4 @@
-import { setRangeAfter, setRangeOn } from "./setRangeAfter";
+import { setRangeOn } from "./setRangeAfter";
 
 export default function checkForLineFormatting(
   editable: Element,

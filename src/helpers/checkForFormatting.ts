@@ -1,5 +1,4 @@
 import getNodeContentEditable from "./getNodeContentEditable";
-import goToPositionContentEditable from "./goToPositionContentEditable";
 import { setRangeAfter } from "./setRangeAfter";
 
 const checkForInlineFormatting = (editable: Element) => {
@@ -38,11 +37,5 @@ const checkForInlineFormatting = (editable: Element) => {
   });
 };
 
-function locations(substring: string, string: string) {
-  let a = [],
-    i = -1;
-  while ((i = string.indexOf(substring, i + 1)) >= 0) a.push(i);
-  return a;
-}
 
 export default checkForInlineFormatting;

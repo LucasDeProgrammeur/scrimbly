@@ -25,7 +25,7 @@ const LeftMenu = ({
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   useEffect(() => {
     setFetchedNotes(getData().notes);
-  }, []);
+  }, [setFetchedNotes]);
   return (
     <div className="leftMenu">
       <div className="topBar" onMouseLeave={() => setBottomBarText("")}>

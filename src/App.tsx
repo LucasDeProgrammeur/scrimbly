@@ -13,8 +13,6 @@ import {
 } from "./helpers/io/storageFunctions";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
 import handleCounter from "./helpers/handleCounter";
-import getNodeContentEditable from "./helpers/getNodeContentEditable";
-import { setRangeAfter } from "./helpers/setRangeAfter";
 // import initDB from "./io/dbFunctions";
 
 function App() {
