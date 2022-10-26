@@ -35,6 +35,22 @@
   outline: none;
 }
 
+.editable img {
+  resize: both;
+}
+
+.imageFrame {
+  background-size: 100% auto;
+  resize: both;
+  overflow: auto;
+  display: inline-block;
+}
+
+.imageFrame:hover {
+  border: 2px dotted;
+
+}
+
 .draggable {
   width: calc(100% - 138px);
   float: left;

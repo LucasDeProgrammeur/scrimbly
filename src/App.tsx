@@ -26,6 +26,9 @@ function App() {
   let [maximized, setMaximized] = useState(false);
   let cbox = document.querySelectorAll("input");
 
+
+
+
   cbox.forEach((cb) => {
     cb.addEventListener("click", () => {
       console.log("change check");
@@ -136,7 +139,35 @@ function App() {
                 return;
               }
 
+
               const target = e.target as HTMLInputElement;
+
+              [...target.children].forEach(el => {
+                
+                if (el.nodeName === "IMG") {
+                  debugger;   
+                  el.remove();
+                }
+
+
+                [...el.children].forEach(eli => {
+                  if (eli.nodeName === "IMG") {
+                    let newEl = document.createElement("div");
+                    newEl.setAttribute("class", "imageFrame");
+                    newEl.style.background = `url("${eli.getAttribute("src")}") no-repeat`;
+                    newEl.style.backgroundSize = `100% auto`;
+                    newEl.style.height = eli.clientHeight + "px" || "100px";
+                    newEl.style.width = eli.clientWidth + "px" || "100px";
+
+                    eli.parentElement?.insertBefore(newEl, eli);
+
+                      console.log("Hi")
+                    eli.remove();
+                  }
+                })
+              })
+
+
               handleCounter(target, setCharAmount, setWordAmount);
 
               if (target.innerHTML === "<br>" || target.innerHTML === "") {
