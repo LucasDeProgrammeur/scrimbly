@@ -2,10 +2,6 @@ import { setRangeOn } from "./setRangeAfter";
 
 export default function checkForLineFormatting(
   editable: Element,
-  content: string,
-  nodeType: string,
-  event: React.KeyboardEvent<HTMLDivElement>,
-  setContent: any
 ) {
   let elementTypes = [
     { syntax: "-!", element: "h1" },

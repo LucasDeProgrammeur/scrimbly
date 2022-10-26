@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import setEndOfContenteditable from "./helpers/setEndofContenteditable";
 import LeftMenu from "./components/LeftMenu";
-import checkForInlineFormatting from "./helpers/checkForFormatting";
 import EntryBar from "./components/EntryBar";
 import { SnackbarProvider } from "notistack";
 import {
@@ -11,8 +9,8 @@ import {
   saveSpecificNote,
   getNoteContentByName,
 } from "./helpers/io/storageFunctions";
-import checkForLineFormatting from "./helpers/checkForLineFormatting";
-import handleCounter from "./helpers/handleCounter";
+import WordCounter from "./components/WordCounter";
+import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
 
 function App() {
@@ -21,8 +19,6 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
-  let [charAmount, setCharAmount] = useState("");
-  let [wordAmount, setWordAmount] = useState("");
   let [maximized, setMaximized] = useState(false);
   let cbox = document.querySelectorAll("input");
 
@@ -51,10 +47,8 @@ function App() {
   }, [currentNoteName]);
 
   useEffect(() => {
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
-    //
     if (currentNoteName) {
-      handleCounter(target, setCharAmount, setWordAmount);
+      // handleCounter(target, setCharAmount, setWordAmount);
       saveSpecificNote(currentNoteName, content);
     }
 
@@ -133,58 +127,7 @@ function App() {
               saveSpecificNote(currentNoteName, content);
             }}
             onKeyUp={(e) => {
-              if (entryBarToggle) {
-                document.getElementById("entryBar")?.focus();
-                e.preventDefault();
-                return;
-              }
-
-
-              const target = e.target as HTMLInputElement;
-
-              [...target.children].forEach(el => {
-                
-                if (el.nodeName === "IMG") {
-                  debugger;   
-                  el.remove();
-                }
-
-
-                [...el.children].forEach(eli => {
-                  if (eli.nodeName === "IMG") {
-                    let newEl = document.createElement("div");
-                    newEl.setAttribute("class", "imageFrame");
-                    newEl.style.background = `url("${eli.getAttribute("src")}") no-repeat`;
-                    newEl.style.backgroundSize = `100% auto`;
-                    newEl.style.height = eli.clientHeight + "px" || "100px";
-                    newEl.style.width = eli.clientWidth + "px" || "100px";
-
-                    eli.parentElement?.insertBefore(newEl, eli);
-
-                      console.log("Hi")
-                    eli.remove();
-                  }
-                })
-              })
-
-
-              handleCounter(target, setCharAmount, setWordAmount);
-
-              if (target.innerHTML === "<br>" || target.innerHTML === "") {
-                e.preventDefault();
-                if (e.key.length === 1) {
-                  target.innerHTML = "<div>" + e.key + "</div>";
-                  setEndOfContenteditable(e.target);
-                } else {
-                  target.innerHTML = "<div><br></div>";
-                }
-              }
-
-              target.focus();
-              let val = target?.innerHTML;
-              checkForLineFormatting(target, content, "h1", e, setContent);
-              checkForInlineFormatting(target);
-              setContent(val);
+              setContent(handleKeyPress(e, entryBarToggle) || "");
               saveSpecificNote(currentNoteName, content);
             }}
             className="editable rightContainer"
@@ -195,9 +138,7 @@ function App() {
           </div>
           <div className="bottomBar">
             <p className="bottomBarInfo">{bottomBarText}</p>
-            <p className="charNumbers">
-              Words: {wordAmount} | Characters: {charAmount}
-            </p>
+            <WordCounter content={content}/>
           </div>
           <div className="devBuildNotifier">Development build</div>
         </div>
