@@ -8,6 +8,7 @@ import {
   saveNewNote,
   saveSpecificNote,
   getNoteContentByName,
+  getData,
 } from "./helpers/io/storageFunctions";
 import WordCounter from "./components/WordCounter";
 import handleKeyPress from "./structures/keyPressHandler";
@@ -89,9 +90,6 @@ function App() {
             if (e.key === "Home") {
               resetData();
             }
-            if (e.key === "Escape") {
-              setEntryBarToggle(false);
-            }
           }}
         >
           {entryBarToggle && (
@@ -101,6 +99,8 @@ function App() {
               fireAction={(text: string) => {
                 saveNewNote(text);
                 setCurrentNoteName(text);
+                setEntryBarToggle(false);
+                setFetchedNotes(getData().notes)
                 document.getElementsByClassName("editable")[0].focus();
               }}
               fetchedNotes={fetchedNotes}

@@ -86,7 +86,7 @@
   float: left;
 }
 
-.leftMenu input[type="text"] {
+.searchBox {
   background-color: rgb(71, 71, 82);
   border: 1px solid rgb(81, 81, 95);
   width: calc(100% - 22px);
@@ -102,7 +102,7 @@
   background-color: rgb(54, 54, 59);
 }
 
-.topBar button {
+.topBar button, .actionButton {
   font-family: "segoeMDL2";
   height: 32px;
   width: 32px;
@@ -114,11 +114,11 @@
   margin: 0 4px;
 }
 
-.topBar button:hover {
+.topBar button:hover, .actionButton:hover {
   background-color: rgb(42, 42, 48);
 }
 
-.topBar button:focus {
+.topBar button:focus, .actionButton:focus {
   background-color: rgb(61, 61, 70);
 }
 
@@ -200,8 +200,9 @@
 
 .fileEntry {
   color: white;
-  padding: 10px;
+  padding: 5px;
   font-size: 13px;
+  min-height: 32px;
 }
 
 .selectedEntry {
@@ -211,6 +212,25 @@
 .fileEntry:hover {
   background-color: rgb(50, 50, 55);
   cursor: pointer;
+}
+
+.fileEntry button {
+  visibility: hidden;
+  float: right;
+}
+
+.fileEntry * {
+  display: inline;
+  vertical-align: middle;
+}
+
+.fileEntry p {
+  margin: auto;
+  line-height: 32px;
+}
+
+.fileEntry:hover button {
+  visibility: visible;
 }
 
 .devBuildNotifier {

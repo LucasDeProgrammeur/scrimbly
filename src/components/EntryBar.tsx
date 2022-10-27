@@ -4,15 +4,11 @@ interface EntryBarProps {
   defaultText: string;
   setEntryBarToggle: React.Dispatch<React.SetStateAction<boolean>>;
   fireAction: any;
-  fetchedNotes: Array<object>;
-  setFetchedNotes: any;
 }
 const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   defaultText,
   fireAction,
-  setEntryBarToggle,
-  fetchedNotes,
-  setFetchedNotes,
+  setEntryBarToggle
 }: EntryBarProps) => {
   return (
     <div className="entryBar" id="entryBar">
@@ -23,8 +19,10 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
           if (e.key === "Enter") {
             e.preventDefault();
             fireAction(target.value);
+            setEntryBarToggle(false)
+          }
+          if (e.key === "Escape") {
             setEntryBarToggle(false);
-            setFetchedNotes(getData().notes)
           }
         }}
         autoFocus

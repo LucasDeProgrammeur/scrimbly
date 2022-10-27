@@ -43,6 +43,19 @@ const saveSpecificNote = (noteName: string, content: string) => {
   localStorage.setItem("data", JSON.stringify(data));
 };
 
+const editNoteName = (noteName: string, newName: string) => {
+  let data = getData();
+  let noteIndex = data.notes.findIndex((item: any) => item.name === noteName);
+  if (noteIndex === -1) {
+    throw new Error("This note was not found: " +noteName)
+  }
+
+  data.notes[noteIndex].name = newName;
+
+  localStorage.setItem("data", JSON.stringify(data));
+  return data;
+}
+
 export {
   saveNewNote,
   resetData,
@@ -50,4 +63,5 @@ export {
   saveSpecificNote,
   getNoteContentByName,
   removeNote,
+  editNoteName
 };

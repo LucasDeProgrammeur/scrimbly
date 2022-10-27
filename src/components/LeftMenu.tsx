@@ -72,13 +72,14 @@ const LeftMenu = ({
       </div>
       <input
         type="text"
+        className="searchBox"
         placeholder="Note search"
         onChange={(e) => {
           setNoteSearchQuery(e.target.value);
         }}
       />
       <div className="fileList">
-        {fetchedNotes
+        {fetchedNotes && fetchedNotes
           .filter(
             (e) =>
               e.name.toLowerCase().includes(noteSearchQuery.toLowerCase()) ||
@@ -87,6 +88,7 @@ const LeftMenu = ({
           .map((e: note, i: Number) => {
             return (
               <FileEntry
+              setFetchedNotes={setFetchedNotes}
                 keyNumber={i}
                 currentNoteName={currentNoteName}
                 setCurrentNoteName={setCurrentNoteName}
