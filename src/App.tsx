@@ -103,8 +103,6 @@ function App() {
                 setFetchedNotes(getData().notes)
                 document.getElementsByClassName("editable")[0].focus();
               }}
-              fetchedNotes={fetchedNotes}
-              setFetchedNotes={setFetchedNotes}
             />
           )}
           <LeftMenu
