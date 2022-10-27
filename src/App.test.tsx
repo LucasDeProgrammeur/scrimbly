@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen, queryByAttribute, fireEvent, prettyDOM } from '@testing-library/react';
-import App from './App';
+import ReactLoader from './components/ReactLoader';
 import { keyboard } from '@testing-library/user-event/dist/keyboard';
 import userEvent from '@testing-library/user-event';
 
 
-const view = render(<App />);
+const view = render(<ReactLoader />);
 const getByClass = queryByAttribute.bind(null, "class")
 
 test('newNote', () => {
@@ -22,7 +22,7 @@ test('newNote', () => {
 
 
 test('editNote', async () => {
-  const view = render(<App />);
+  const view = render(<ReactLoader />);
   const noteName = getByClass(view.container, 'fileEntry');
   fireEvent.click(noteName!);
   const editable = getByClass(view.container, 'editable rightContainer');
@@ -33,7 +33,7 @@ test('editNote', async () => {
 });
 
 test('rename', async () => {
-  const view = render(<App />);
+  const view = render(<ReactLoader />);
   const fileEntry = getByClass(view.container, 'fileEntry');
   fireEvent.mouseOver(fileEntry!);
   fireEvent.click(getByClass(view.container, "actionButton")!)
@@ -46,7 +46,7 @@ test('rename', async () => {
 
 
 test('deleteNote', () => {
-  const view = render(<App />);
+  const view = render(<ReactLoader />);
   const noteName = getByClass(view.container, 'fileEntry');
   fireEvent.click(noteName!);
   const deleteButton = getByClass(view.container, 'deleteNoteButton')
