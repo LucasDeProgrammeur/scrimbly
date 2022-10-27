@@ -33,6 +33,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   outline: none;
+  overflow-y: auto;
 }
 
 .editable img {

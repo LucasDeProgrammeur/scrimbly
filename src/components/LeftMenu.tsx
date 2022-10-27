@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getData, removeNote } from "../helpers/io/storageFunctions";
 import { useSnackbar } from "notistack";
 import { noteList, note } from "../types/ioTypes";
+import FileEntry from "./FileEntry";
 
 interface LeftMenuProps {
   setEntrybarToggle: any;
@@ -20,7 +21,6 @@ const LeftMenu = ({
   setFetchedNotes,
   setBottomBarText,
 }: LeftMenuProps) => {
-
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   useEffect(() => {
@@ -85,26 +85,13 @@ const LeftMenu = ({
               e.name === currentNoteName
           )
           .map((e: note, i: Number) => {
-            if (e.name === currentNoteName) {
-              return (
-                <div
-                  key={i as React.Key}
-                  onClick={() => setCurrentNoteName(e.name)}
-                  className="fileEntry selectedEntry"
-                >
-                  {e.name}
-                </div>
-              );
-            }
-
             return (
-              <div
-                key={i as React.Key}
-                onClick={() => setCurrentNoteName(e.name)}
-                className="fileEntry"
-              >
-                {e.name}
-              </div>
+              <FileEntry
+                keyNumber={i}
+                currentNoteName={currentNoteName}
+                setCurrentNoteName={setCurrentNoteName}
+                name={e.name}
+              />
             );
           })}
       </div>
