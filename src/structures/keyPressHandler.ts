@@ -20,6 +20,8 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
           el.remove();
         }
 
+        
+
 
         [...el.children].forEach(eli => {
           if (eli.nodeName === "IMG") {
@@ -48,10 +50,12 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
         }
       }
 
+
       target.focus();
       let val = target?.innerHTML;
       checkForLineFormatting(target);
       checkForInlineFormatting(target);
+      // checkForEmptyElements(target)
       
       return val;
 }

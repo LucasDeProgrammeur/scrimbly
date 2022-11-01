@@ -14,13 +14,14 @@ const setRangeAfter = (newElement: HTMLElement, rangeSetter = 0) => {
 };
 
 
-const setRangeOn = (newElement: HTMLElement) => {
+const setRangeOn = (newElement: HTMLElement, rangeSetter = 1) => {
   let range = document.createRange();
   // range.setStartAfter(newElement);
 
-  range.setStart(newElement, 1);
+  range.setStart(newElement, rangeSetter);
   window.getSelection()?.removeAllRanges();
   window.getSelection()?.addRange(range);
 }
 
 export { setRangeAfter, setRangeOn };
+

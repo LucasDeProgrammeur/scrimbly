@@ -5,6 +5,7 @@ const checkForInlineFormatting = (editable: Element) => {
   const replaceableSymbols = [
     { key: "*", element: "em" },
     { key: "**", element: "b" },
+    { key: "~", element: "s" },
   ];
 
   replaceableSymbols.forEach((e) => {
@@ -25,7 +26,6 @@ const checkForInlineFormatting = (editable: Element) => {
         newElement.textContent = newContent;
 
         getNodeContentEditable()?.replaceChild(newElement, el);
-        console.log(newElement.parentElement)
         newElement.insertAdjacentHTML(
           "beforebegin",
           previousTextBegin + "&#8203;"

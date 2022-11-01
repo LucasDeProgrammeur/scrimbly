@@ -7,6 +7,7 @@ export default function checkForLineFormatting(
     { syntax: "-!", element: "h1" },
     { syntax: "-@", element: "h2" },
     { syntax: "-#", element: "h3" },
+    { syntax: "-s", element: "s" },
     {
       syntax: "-cb",
       element: "input",

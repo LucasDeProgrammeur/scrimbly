@@ -1,16 +1,15 @@
+import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import "./App.css";
-import LeftMenu from "./components/LeftMenu";
 import EntryBar from "./components/EntryBar";
-import { useSnackbar } from "notistack";
-import {
-  resetData,
-  saveNewNote,
-  saveSpecificNote,
-  getNoteContentByName,
-  getData,
-} from "./helpers/io/storageFunctions";
+import LeftMenu from "./components/LeftMenu";
 import WordCounter from "./components/WordCounter";
+import createEnterElements from "./helpers/createEnterElements";
+import {
+  getData, getNoteContentByName, resetData,
+  saveNewNote,
+  saveSpecificNote
+} from "./helpers/io/storageFunctions";
 import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
 
@@ -20,6 +19,7 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
+  let [count, setCount] = useState(0);
   let [maximized, setMaximized] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   let cbox = document.querySelectorAll("input");
@@ -131,6 +131,17 @@ function App() {
           onKeyUp={(e) => {
             setContent(handleKeyPress(e, entryBarToggle) || "");
             saveSpecificNote(currentNoteName, content);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              console.log("enter")
+
+              if (count > 0) {
+                createEnterElements(e);
+              }
+              setCount(count++);
+            }
+      
           }}
           className="editable rightContainer"
         >
