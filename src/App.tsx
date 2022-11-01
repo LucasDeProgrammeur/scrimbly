@@ -1,14 +1,16 @@
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import EntryBar from "./components/EntryBar";
 import LeftMenu from "./components/LeftMenu";
 import WordCounter from "./components/WordCounter";
 import createEnterElements from "./helpers/createEnterElements";
 import {
-  getData, getNoteContentByName, resetData,
+  getData,
+  getNoteContentByName,
+  resetData,
   saveNewNote,
-  saveSpecificNote
+  saveSpecificNote,
 } from "./helpers/io/storageFunctions";
 import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
@@ -19,13 +21,9 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
-  let [count, setCount] = useState(0);
   let [maximized, setMaximized] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   let cbox = document.querySelectorAll("input");
-
-
-
 
   cbox.forEach((cb) => {
     cb.addEventListener("click", () => {
@@ -53,7 +51,6 @@ function App() {
       // handleCounter(target, setCharAmount, setWordAmount);
       saveSpecificNote(currentNoteName, content);
     }
-
   }, [content, currentNoteName]);
 
   useEffect(() => {
@@ -72,7 +69,6 @@ function App() {
         </button>
         <button
           onClick={() => {
-
             maximized ? controls.restore() : controls.maximize();
             setMaximized(!maximized);
           }}
@@ -97,14 +93,14 @@ function App() {
             setEntryBarToggle={setEntryBarToggle}
             defaultText="Enter new note name..."
             fireAction={(text: string) => {
-              if (fetchedNotes.findIndex(e => e.name === text) !== -1) {
-                  enqueueSnackbar("Note name already exists");
-                  return;
+              if (fetchedNotes.findIndex((e) => e.name === text) !== -1) {
+                enqueueSnackbar("Note name already exists");
+                return;
               }
               saveNewNote(text);
               setCurrentNoteName(text);
               setEntryBarToggle(false);
-              setFetchedNotes(getData().notes)
+              setFetchedNotes(getData().notes);
               document.getElementsByClassName("editable")[0].focus();
             }}
           />
@@ -134,14 +130,8 @@ function App() {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              console.log("enter")
-
-              if (count > 0) {
-                createEnterElements(e);
-              }
-              setCount(count++);
+              createEnterElements(e);
             }
-      
           }}
           className="editable rightContainer"
         >
@@ -151,7 +141,7 @@ function App() {
         </div>
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>
-          <WordCounter content={content}/>
+          <WordCounter content={content} />
         </div>
         <div className="devBuildNotifier">Development build</div>
       </div>

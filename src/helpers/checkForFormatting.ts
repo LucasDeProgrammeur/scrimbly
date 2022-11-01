@@ -18,7 +18,6 @@ const checkForInlineFormatting = (editable: Element) => {
           new RegExp(`(?<!\\${keySplit})(\\${keySplit})([^\\${keySplit}]+\\${keySplit})`, "g")
         )
       ) {
-        //debugger;
         let previousTextBegin = el.textContent.split(e.key)[0];
         let previousTextEnd = el.textContent.split(e.key)[2];
         let newContent = el.textContent.split(e.key)[1];

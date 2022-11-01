@@ -15,8 +15,7 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
 
       [...target.children].forEach(el => {
         
-        if (el.nodeName === "IMG") {
-          debugger;   
+        if (el.nodeName === "IMG") {  
           el.remove();
         }
 
