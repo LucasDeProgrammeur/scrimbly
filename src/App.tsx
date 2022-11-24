@@ -5,6 +5,7 @@ import EntryBar from "./components/EntryBar";
 import LeftMenu from "./components/LeftMenu";
 import WordCounter from "./components/WordCounter";
 import createEnterElements from "./helpers/createEnterElements";
+import getNodeContentEditable from "./helpers/getNodeContentEditable";
 import {
   getData,
   getNoteContentByName,
@@ -12,6 +13,7 @@ import {
   saveNewNote,
   saveSpecificNote,
 } from "./helpers/io/storageFunctions";
+import { isRangeAtEnd } from "./helpers/setRangeAfter";
 import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
 
@@ -130,7 +132,10 @@ function App() {
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              createEnterElements(e);
+              if (getNodeContentEditable()?.parentElement?.className !== "App" && isRangeAtEnd()) {
+                createEnterElements(e);
+              }
+              
             }
           }}
           className="editable rightContainer"

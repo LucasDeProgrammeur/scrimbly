@@ -1,3 +1,5 @@
+import getNodeContentEditable from "./getNodeContentEditable";
+
 const setRangeAfter = (newElement: HTMLElement, rangeSetter = 0) => {
   let range = document.createRange();
   // range.setStartAfter(newElement);
@@ -23,5 +25,11 @@ const setRangeOn = (newElement: HTMLElement, rangeSetter = 1) => {
   window.getSelection()?.addRange(range);
 }
 
-export { setRangeAfter, setRangeOn };
+const isRangeAtEnd = () => {
+  let selection = window.getSelection();
+  let bool = selection?.anchorNode!.textContent?.length === selection?.anchorOffset && !selection?.anchorNode?.parentElement!.nextSibling;
+  return bool;
+}
+
+export { setRangeAfter, setRangeOn, isRangeAtEnd };
 

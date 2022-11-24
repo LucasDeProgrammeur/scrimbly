@@ -9,7 +9,10 @@ const WordCounter = ({content }:WordCounterProps) => {
   let [wordAmount, setWordAmount] = useState(0);
 
   useEffect(() =>{
-    let text = content ? content.replace(/\u200B/g, "") : "";
+    let text = content ? content.replace(/<[^>]+>/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '') : "";
+    text.split("").forEach((e) => {
+      console.log(e.charCodeAt(0));
+    })
     setCharAmount(text.length);
     setWordAmount(text.split(" ").length)
   }, [content])
