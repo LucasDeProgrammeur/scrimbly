@@ -11,6 +11,7 @@ interface LeftMenuProps {
   fetchedNotes: noteList;
   setFetchedNotes: any;
   setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
+  setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const LeftMenu = ({
@@ -20,6 +21,7 @@ const LeftMenu = ({
   fetchedNotes,
   setFetchedNotes,
   setBottomBarText,
+  setHelpOpen
 }: LeftMenuProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
@@ -47,7 +49,7 @@ const LeftMenu = ({
         >
           &#xE74D;
         </button>
-        <button onMouseEnter={() => setBottomBarText("Help")}>&#xE897;</button>
+        <button onMouseEnter={() => setBottomBarText("Help")} onClick={() => {setHelpOpen(true)}}>&#xE897;</button>
         <button
           onMouseEnter={() => setBottomBarText("Export data")}
           onClick={() => {

@@ -2,6 +2,7 @@ import { useSnackbar } from "notistack";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import EntryBar from "./components/EntryBar";
+import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
 import WordCounter from "./components/WordCounter";
 import createEnterElements from "./helpers/createEnterElements";
@@ -24,6 +25,7 @@ function App() {
   let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
   let [maximized, setMaximized] = useState(false);
+  let [helpOpen, setHelpOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   let cbox = document.querySelectorAll("input");
 
@@ -114,9 +116,10 @@ function App() {
           fetchedNotes={fetchedNotes}
           setFetchedNotes={setFetchedNotes}
           setBottomBarText={setBottomBarText}
+          setHelpOpen={setHelpOpen}
         />
 
-        <div
+        { helpOpen ?<div
           contentEditable={currentNoteName ? "true" : "false"}
           suppressContentEditableWarning={true}
           onClick={(e) => {
@@ -143,7 +146,7 @@ function App() {
           <div>
             <br></br>
           </div>
-        </div>
+        </div> : <HelpPage />}
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>
           <WordCounter content={content} />

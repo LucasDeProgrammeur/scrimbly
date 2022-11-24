@@ -54,7 +54,7 @@
 
 .draggable {
   width: calc(100% - 138px);
-  float: left;
+  display: inline-block;
   height: 32px;
   background-color: rgb(24, 24, 32);
   -webkit-app-region: drag;
