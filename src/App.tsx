@@ -40,13 +40,14 @@ function App() {
   });
 
   useEffect(() => {
+    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+    if (target === undefined) return;
     if (currentNoteName === "") return;
     if (getNoteContentByName(currentNoteName) !== null) {
       setContent(getNoteContentByName(currentNoteName));
     } else {
       setCurrentNoteName("");
     }
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
     target.innerHTML = getNoteContentByName(currentNoteName);
   }, [currentNoteName]);
 
@@ -92,61 +93,71 @@ function App() {
           }
         }}
       >
-        {entryBarToggle && (
-          <EntryBar
-            setEntryBarToggle={setEntryBarToggle}
-            defaultText="Enter new note name..."
-            fireAction={(text: string) => {
-              if (fetchedNotes.findIndex((e) => e.name === text) !== -1) {
-                enqueueSnackbar("Note name already exists");
-                return;
-              }
-              saveNewNote(text);
-              setCurrentNoteName(text);
-              setEntryBarToggle(false);
-              setFetchedNotes(getData().notes);
-              document.getElementsByClassName("editable")[0].focus();
-            }}
+        <main>
+          {entryBarToggle && (
+            <EntryBar
+              setEntryBarToggle={setEntryBarToggle}
+              defaultText="Enter new note name..."
+              fireAction={(text: string) => {
+                if (fetchedNotes.findIndex((e) => e.name === text) !== -1) {
+                  enqueueSnackbar("Note name already exists");
+                  return;
+                }
+                saveNewNote(text);
+                setCurrentNoteName(text);
+                setEntryBarToggle(false);
+                setFetchedNotes(getData().notes);
+                document.getElementsByClassName("editable")[0].focus();
+              }}
+            />
+          )}
+          <LeftMenu
+            setEntrybarToggle={setEntryBarToggle}
+            setCurrentNoteName={setCurrentNoteName}
+            currentNoteName={currentNoteName}
+            fetchedNotes={fetchedNotes}
+            setFetchedNotes={setFetchedNotes}
+            setBottomBarText={setBottomBarText}
+            helpOpen={helpOpen}
+            setHelpOpen={setHelpOpen}
           />
-        )}
-        <LeftMenu
-          setEntrybarToggle={setEntryBarToggle}
-          setCurrentNoteName={setCurrentNoteName}
-          currentNoteName={currentNoteName}
-          fetchedNotes={fetchedNotes}
-          setFetchedNotes={setFetchedNotes}
-          setBottomBarText={setBottomBarText}
-          setHelpOpen={setHelpOpen}
-        />
 
-        { helpOpen ?<div
-          contentEditable={currentNoteName ? "true" : "false"}
-          suppressContentEditableWarning={true}
-          onClick={(e) => {
-            if (!currentNoteName) return;
-            setContent(
-              document.getElementsByClassName("editable")[0].innerHTML
-            );
-            saveSpecificNote(currentNoteName, content);
-          }}
-          onKeyUp={(e) => {
-            setContent(handleKeyPress(e, entryBarToggle) || "");
-            saveSpecificNote(currentNoteName, content);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              if (getNodeContentEditable()?.parentElement?.className !== "App" && isRangeAtEnd()) {
-                createEnterElements(e);
-              }
-              
-            }
-          }}
-          className="editable rightContainer"
-        >
-          <div>
-            <br></br>
-          </div>
-        </div> : <HelpPage />}
+          {!helpOpen ? (
+            <div
+              contentEditable={currentNoteName ? "true" : "false"}
+              suppressContentEditableWarning={true}
+              onClick={(e) => {
+                if (!currentNoteName) return;
+                setContent(
+                  document.getElementsByClassName("editable")[0].innerHTML
+                );
+                saveSpecificNote(currentNoteName, content);
+              }}
+              onKeyUp={(e) => {
+                setContent(handleKeyPress(e, entryBarToggle) || "");
+                saveSpecificNote(currentNoteName, content);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (
+                    getNodeContentEditable()?.parentElement?.className !==
+                      "App" &&
+                    isRangeAtEnd()
+                  ) {
+                    createEnterElements(e);
+                  }
+                }
+              }}
+              className="editable"
+            >
+              <div>
+                <br></br>
+              </div>
+            </div>
+          ) : (
+            <HelpPage setHelpOpen={setHelpOpen} />
+          )}
+        </main>
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>
           <WordCounter content={content} />

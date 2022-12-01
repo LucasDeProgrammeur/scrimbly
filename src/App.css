@@ -3,6 +3,11 @@
   src: url(./fonts//SegMDL2.ttf);
 }
 
+
+.disabled {
+  display: none;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -19,21 +24,26 @@
   height: 100vh;
 }
 
-.rightContainer {
-  height: calc(100% - 80px);
-  width: calc(100% - 230px);
+main {
+  height: calc(100vh - 57px);
+  display: flex;
 }
 
 .editable {
+  width: calc(100% - 210px);
   text-align: left;
-  padding: 10px;
   background-color: #2d3441;
   border-style: none;
-  color: white;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   outline: none;
+}
+
+.helpPage,
+.editable {
   overflow-y: auto;
+  padding: 10px;
+  color: white;
 }
 
 .editable img {
@@ -49,7 +59,6 @@
 
 .imageFrame:hover {
   border: 2px dotted;
-
 }
 
 .draggable {
@@ -79,11 +88,44 @@
   margin: 20px;
 }
 
+/* .leftMenu {
+  background-color: rgb(42, 42, 48);
+  width: 210px;
+  resize: horizontal;
+  border: 2px solid;
+} */
+
 .leftMenu {
   background-color: rgb(42, 42, 48);
-  height: calc(100% - 55px);
-  width: 210px;
-  float: left;
+  min-width: 210px;
+  overflow: hidden;
+  -webkit-user-drag: none;
+}
+
+.leftMenu .fileEntry {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: inherit;
+}
+
+.resizerSpace {
+  height: 100%;
+  width: 10px;
+  cursor: w-resize;
+  transition: background-color 0.2s;
+  transition: width 0.3s;
+}
+
+.resizerSpace:hover,
+.resizerSpace:active {
+  background-color: rgb(64 100 119/0.5);
+  width: 15px;
+}
+
+.resizerSpace:hover,
+.resizerSpace:active {
+  cursor: ew-resize;
 }
 
 .searchBox {
@@ -102,7 +144,8 @@
   background-color: rgb(54, 54, 59);
 }
 
-.topBar button, .actionButton {
+.topBar button,
+.actionButton {
   font-family: "segoeMDL2";
   height: 32px;
   width: 32px;
@@ -114,11 +157,13 @@
   margin: 0 4px;
 }
 
-.topBar button:hover, .actionButton:hover {
+.topBar button:hover,
+.actionButton:hover {
   background-color: rgb(42, 42, 48);
 }
 
-.topBar button:focus, .actionButton:focus {
+.topBar button:focus,
+.actionButton:focus {
   background-color: rgb(61, 61, 70);
 }
 
@@ -203,6 +248,7 @@
   padding: 5px;
   font-size: 13px;
   min-height: 32px;
+  position: relative;
 }
 
 .selectedEntry {
@@ -215,8 +261,10 @@
 }
 
 .fileEntry button {
-  visibility: hidden;
-  float: right;
+  display: none;
+  position: absolute;
+  right: 5px;
+  top: 5px;
 }
 
 .fileEntry * {
@@ -230,7 +278,7 @@
 }
 
 .fileEntry:hover button {
-  visibility: visible;
+  display: block;
 }
 
 .devBuildNotifier {
