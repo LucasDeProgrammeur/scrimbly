@@ -13,6 +13,23 @@
   pointer-events: none;
 }
 
+*::-webkit-scrollbar{
+  width: 9px;
+  background-color: transparent;
+  margin: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  width: 8px;
+  background-color: rgb(15 15 20/0.4);
+  border-radius: 17px;
+}
+
+img, .imageFrame {
+  filter: drop-shadow(-2px 0px 10px rgb(15 15 20/0.3));
+  /* box-shadow: -2px 0px 10px rgb(15 15 20/0.3);; */
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -20,7 +37,7 @@
 }
 
 .App {
-  background-color: #2d3441;
+  background-color: #2d3741;
   height: 100vh;
 }
 
@@ -32,11 +49,18 @@ main {
 .editable {
   width: calc(100% - 210px);
   text-align: left;
-  background-color: #2d3441;
+
   border-style: none;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   outline: none;
+}
+
+.shadowElement {
+  height: 0.5px;
+  box-shadow: 3px 3px 3px;
+  width: 100vw;
+  position: absolute;
 }
 
 .helpPage,
@@ -46,24 +70,58 @@ main {
   color: white;
 }
 
+.helpPage {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  margin: 40px;
+  background-color: rgb(40 40 48);
+  border-radius: 17px;
+  box-shadow: 0 0 20px rgb(24 24 28/0.52);
+  padding: 20px;
+  width: calc(100vw -100px);
+  height: calc(100% - 120px);
+  overflow-y: scroll;
+
+}
+
+.shadowElement {
+  z-index: 100;
+  position: fixed;
+  margin-top: 100px;
+  bottom: 35px;
+  left: 45px;
+  width: calc(100% - 85px);
+  height: 250px;
+  border-bottom-left-radius: 17px;
+  border-bottom-right-radius: 17px;
+  pointer-events: none;
+  box-shadow: inset 4px -65px 23px -27px rgb(40 40 48);
+}
+
 .editable img {
   resize: both;
 }
 
 .imageFrame {
-  background-size: 100% auto;
+  /* background-size: 100%; */
   resize: both;
   overflow: auto;
   display: inline-block;
 }
 
-.imageFrame:hover {
-  border: 2px dotted;
+.imageFrame::selection {
+  border: 5px solid black;
+  background: none;
+}
+
+.imageFrame:active {
+  border: 2px dashed rgb(123, 123, 138);
 }
 
 .draggable {
   width: calc(100% - 138px);
-  display: inline-block;
   height: 32px;
   background-color: rgb(24, 24, 32);
   -webkit-app-region: drag;
@@ -97,15 +155,16 @@ main {
 
 .leftMenu {
   background-color: rgb(42, 42, 48);
-  min-width: 210px;
-  overflow: hidden;
+  min-width: 220px;
   -webkit-user-drag: none;
+  box-shadow: 2px -1px 20px rgb(24 24 32/0.32);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .leftMenu .fileEntry {
   text-overflow: ellipsis;
   white-space: nowrap;
-  overflow: hidden;
   width: inherit;
 }
 
@@ -115,6 +174,7 @@ main {
   cursor: w-resize;
   transition: background-color 0.2s;
   transition: width 0.3s;
+  background-color: transparent;
 }
 
 .resizerSpace:hover,
@@ -209,6 +269,11 @@ main {
   height: 100%;
   width: 46px;
   font-size: 10px;
+}
+
+.windowBarContainer {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .entryBar {

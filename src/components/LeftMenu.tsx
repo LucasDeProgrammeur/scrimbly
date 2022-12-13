@@ -35,6 +35,7 @@ const LeftMenu = ({
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
     const leftSide = document.getElementsByClassName("leftMenu")[0];
     const rightSide = document.getElementsByClassName("editable")[0] as HTMLElement;
+    console.log(rightSide);
     const container = document.getElementsByClassName("App")[0] as HTMLElement;
     var moveX =
       leftSide.getBoundingClientRect().width +
@@ -48,7 +49,6 @@ const LeftMenu = ({
 
     container.addEventListener("mousemove", function (e) {
       moveX = e.x;
-      console.log(e.x);
       let newWidth =  (moveX - resize.getBoundingClientRect().width / 2) + 10 + "px";
       if (drag) {
         rightSide.style.width = "calc(100% - " + newWidth + ")";

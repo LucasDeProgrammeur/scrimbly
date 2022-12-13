@@ -4,6 +4,7 @@ import "./App.css";
 import EntryBar from "./components/EntryBar";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
+import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
 import createEnterElements from "./helpers/createEnterElements";
 import getNodeContentEditable from "./helpers/getNodeContentEditable";
@@ -24,7 +25,6 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
-  let [maximized, setMaximized] = useState(false);
   let [helpOpen, setHelpOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   let cbox = document.querySelectorAll("input");
@@ -64,27 +64,7 @@ function App() {
 
   return (
     <>
-      <div className="draggable">
-        <p>Notes development build</p>
-      </div>
-
-      <div className="windowControls">
-        <button onClick={() => controls.minimize()} id="minimize">
-          &#xE921;
-        </button>
-        <button
-          onClick={() => {
-            maximized ? controls.restore() : controls.maximize();
-            setMaximized(!maximized);
-          }}
-          id="maximize"
-        >
-          {maximized ? "" : ""}
-        </button>
-        <button onClick={() => controls.close()} id="close">
-          &#xE8BB;
-        </button>
-      </div>
+      <WindowBar />
       <div
         className="App"
         onKeyDown={(e) => {
@@ -121,42 +101,41 @@ function App() {
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
           />
-
-          {!helpOpen ? (
-            <div
-              contentEditable={currentNoteName ? "true" : "false"}
-              suppressContentEditableWarning={true}
-              onClick={(e) => {
-                if (!currentNoteName) return;
-                setContent(
-                  document.getElementsByClassName("editable")[0].innerHTML
-                );
-                saveSpecificNote(currentNoteName, content);
-              }}
-              onKeyUp={(e) => {
-                setContent(handleKeyPress(e, entryBarToggle) || "");
-                saveSpecificNote(currentNoteName, content);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  if (
-                    getNodeContentEditable()?.parentElement?.className !==
-                      "App" &&
-                    isRangeAtEnd()
-                  ) {
-                    createEnterElements(e);
+            <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
+            <>
+              <div
+                contentEditable={currentNoteName ? "true" : "false"}
+                suppressContentEditableWarning={true}
+                onClick={(e) => {
+                  if (!currentNoteName) return;
+                  setContent(
+                    document.getElementsByClassName("editable")[0].innerHTML
+                  );
+                  saveSpecificNote(currentNoteName, content);
+                }}
+                onKeyUp={(e) => {
+                  setContent(handleKeyPress(e, entryBarToggle) || "");
+                  saveSpecificNote(currentNoteName, content);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    if (
+                      getNodeContentEditable()?.parentElement?.className !==
+                        "App" &&
+                      isRangeAtEnd()
+                    ) {
+                      createEnterElements(e);
+                    }
                   }
-                }
-              }}
-              className="editable"
-            >
-              <div>
-                <br></br>
+                }}
+                className="editable"
+              >
+                <div>
+                  <br></br>
+                </div>
               </div>
-            </div>
-          ) : (
-            <HelpPage setHelpOpen={setHelpOpen} />
-          )}
+            </>
+         
         </main>
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>

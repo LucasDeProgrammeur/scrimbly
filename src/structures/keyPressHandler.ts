@@ -24,12 +24,14 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
 
         [...el.children].forEach(eli => {
           if (eli.nodeName === "IMG") {
+            
             let newEl = document.createElement("div");
             newEl.setAttribute("class", "imageFrame");
             newEl.style.background = `url("${eli.getAttribute("src")}") no-repeat`;
-            newEl.style.backgroundSize = `100% auto`;
+            newEl.style.backgroundSize = "100% 100%";
             newEl.style.height = eli.clientHeight + "px" || "100px";
             newEl.style.width = eli.clientWidth + "px" || "100px";
+            newEl.setAttribute("contenteditable", "false");
 
             eli.parentElement?.insertBefore(newEl, eli);
 
