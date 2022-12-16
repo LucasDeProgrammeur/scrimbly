@@ -29,7 +29,7 @@ const FileEntry = ({
       >
         <p>{name}</p>
         <button
-          className="actionButton"
+          className="actionButton editNoteNameButton"
           onClick={() => {
             setEntryBarToggle(true);
           }}

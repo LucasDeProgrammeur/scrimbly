@@ -25,7 +25,7 @@ test('editNote', async () => {
   const view = render(<ReactLoader />);
   const noteName = getByClass(view.container, 'fileEntry');
   fireEvent.click(noteName!);
-  const editable = getByClass(view.container, 'editable rightContainer');
+  const editable = getByClass(view.container, 'editable');
   userEvent.click(editable!)
   userEvent.keyboard("*test*")
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -36,7 +36,7 @@ test('rename', async () => {
   const view = render(<ReactLoader />);
   const fileEntry = getByClass(view.container, 'fileEntry');
   fireEvent.mouseOver(fileEntry!);
-  fireEvent.click(getByClass(view.container, "actionButton")!)
+  fireEvent.click(getByClass(view.container, "actionButton editNoteNameButton")!)
   const entryBar = getByClass(view.container, 'entryBarInput');
   entryBar && fireEvent.change(entryBar, {target: {value: "nieuwe note edit"}})
   entryBar && fireEvent.keyDown(entryBar, {key: "Enter", code: "Enter"})
