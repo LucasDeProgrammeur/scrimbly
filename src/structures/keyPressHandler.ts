@@ -19,9 +19,6 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
           el.remove();
         }
 
-        
-
-
         [...el.children].forEach(eli => {
           if (eli.nodeName === "IMG") {
             
@@ -34,8 +31,6 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
             newEl.setAttribute("contenteditable", "false");
 
             eli.parentElement?.insertBefore(newEl, eli);
-
-              console.log("Hi")
             eli.remove();
           }
         })

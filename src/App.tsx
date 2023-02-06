@@ -40,15 +40,21 @@ function App() {
   });
 
   useEffect(() => {
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
-    if (target === undefined) return;
-    if (currentNoteName === "") return;
-    if (getNoteContentByName(currentNoteName) !== null) {
-      setContent(getNoteContentByName(currentNoteName));
-    } else {
-      setCurrentNoteName("");
+    let syncContentFromNote = async () => {
+      let newContent = await dbConnection.getOneByName(currentNoteName);
+      let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+      if (target === undefined) return;
+      if (currentNoteName === "") return;
+      if (getNoteContentByName(currentNoteName) !== null) {
+        setContent(newContent.noteHTML);
+      } else {
+        setCurrentNoteName("");
+      }
+      target.innerHTML = newContent.noteHTML;
     }
-    target.innerHTML = getNoteContentByName(currentNoteName);
+
+    syncContentFromNote();
+
   }, [currentNoteName]);
 
   useEffect(() => {
@@ -78,15 +84,16 @@ function App() {
             <EntryBar
               setEntryBarToggle={setEntryBarToggle}
               defaultText="Enter new note name..."
-              fireAction={(text: string) => {
-                if (fetchedNotes.findIndex((e) => e.name === text) !== -1) {
+              fireAction={(newNoteName: string) => {
+                if (fetchedNotes.findIndex((e) => e.noteName === newNoteName) !== -1) {
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
-                saveNewNote(text);
-                setCurrentNoteName(text);
+                dbConnection.insert(newNoteName, "<div><br></br></div>");
+                setFetchedNotes([...fetchedNotes, {noteName: newNoteName, noteHTML: "<div><br></br></div>"}]);
+                setCurrentNoteName(newNoteName);
                 setEntryBarToggle(false);
-                setFetchedNotes(getData().notes);
+                
                 document.getElementsByClassName("editable")[0].focus();
               }}
             />
@@ -115,9 +122,9 @@ function App() {
                 }}
                 onKeyUp={(e) => {
                   setContent(handleKeyPress(e, entryBarToggle) || "");
-                  saveSpecificNote(currentNoteName, content);
+                  dbConnection.saveOne(currentNoteName, content);
                 }}
-                onKeyDown={(e) => {
+                onKeyDown={async (e) => {
                   if (e.key === "Enter") {
                     if (
                       getNodeContentEditable()?.parentElement?.className !==

@@ -3,7 +3,6 @@ import { isRangeAtEnd, setRangeOn } from "./setRangeAfter";
 
 const createEnterElements = (e: Event) => {
   let node = getNodeContentEditable();
-
   if (node?.parentElement?.className === "App" || !isRangeAtEnd()) {
     return;
   }

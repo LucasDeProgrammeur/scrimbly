@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { editNoteName } from "../helpers/io/storageFunctions";
+import { noteList } from "../types/ioTypes";
 import EntryBar from "./EntryBar";
 
 interface FileEntryProps {
@@ -7,7 +8,8 @@ interface FileEntryProps {
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
   name: string;
-  setFetchedNotes: React.Dispatch<React.SetStateAction<string>>;
+  fetchedNotes: noteList;
+  setFetchedNotes: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const FileEntry = ({
@@ -15,6 +17,7 @@ const FileEntry = ({
   currentNoteName,
   setCurrentNoteName,
   name,
+  fetchedNotes,
   setFetchedNotes
 }: FileEntryProps) => {
   const [entryBarToggle, setEntryBarToggle] = useState(false);
@@ -41,7 +44,11 @@ const FileEntry = ({
         <EntryBar
           defaultText="Enter note name to change to"
           fireAction={(newNote: string) => {
-            setFetchedNotes(editNoteName(name, newNote).notes);
+            let updatedArray = fetchedNotes;
+            let index = updatedArray.findIndex(e => e.noteName === name);
+            updatedArray[index].noteName = newNote;
+            setFetchedNotes(updatedArray);
+            dbConnection.updateName(newNote, name);
           }}
           setEntryBarToggle={setEntryBarToggle}
         />

@@ -10,6 +10,8 @@ import ReactLoader from "./components/ReactLoader";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
+
+
 root.render(
   <ReactLoader />
 );

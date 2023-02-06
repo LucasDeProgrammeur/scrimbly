@@ -28,8 +28,14 @@ const LeftMenu = ({
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   useEffect(() => {
-    setFetchedNotes(getData().notes);
+    const getNotesFromDB = async () => {
+      setFetchedNotes(await dbConnection.getAll());
+    }
+    
+    getNotesFromDB();
   }, [setFetchedNotes]);
+
+
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
@@ -79,8 +85,8 @@ const LeftMenu = ({
             className="deleteNoteButton"
             onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
-              let newValue = removeNote(currentNoteName);
-              setFetchedNotes(newValue.notes);
+              dbConnection.deleteOneByName(currentNoteName);
+              setFetchedNotes(fetchedNotes.filter(x => x.noteName != currentNoteName));
             }}
           >
             &#xE74D;
@@ -124,23 +130,24 @@ const LeftMenu = ({
           }}
         />
         <div className="fileList">
-          {fetchedNotes &&
+          {fetchedNotes.length &&
             fetchedNotes
               .filter(
                 (e) =>
-                  e.name
+                  e.noteName
                     .toLowerCase()
                     .includes(noteSearchQuery.toLowerCase()) ||
-                  e.name === currentNoteName
+                  e.noteName === currentNoteName
               )
               .map((e: note, i: Number) => {
                 return (
                   <FileEntry
                     setFetchedNotes={setFetchedNotes}
+                    fetchedNotes={fetchedNotes}
                     keyNumber={i}
                     currentNoteName={currentNoteName}
                     setCurrentNoteName={setCurrentNoteName}
-                    name={e.name}
+                    name={e.noteName}
                   />
                 );
               })}
