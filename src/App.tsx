@@ -23,7 +23,7 @@ function App() {
   let [content, setContent] = useState("");
   let [entryBarToggle, setEntryBarToggle] = useState(false);
   let [currentNoteName, setCurrentNoteName] = useState("");
-  let [fetchedNotes, setFetchedNotes] = useState([]);
+  let [noteNames, setNoteNames] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -65,8 +65,8 @@ function App() {
   }, [content, currentNoteName]);
 
   useEffect(() => {
-    if (!fetchedNotes.length) setCurrentNoteName("");
-  }, [fetchedNotes]);
+    if (!noteNames.length) setCurrentNoteName("");
+  }, [noteNames]);
 
   return (
     <>
@@ -85,12 +85,12 @@ function App() {
               setEntryBarToggle={setEntryBarToggle}
               defaultText="Enter new note name..."
               fireAction={(newNoteName: string) => {
-                if (fetchedNotes.findIndex((e) => e.noteName === newNoteName) !== -1) {
+                if (noteNames.findIndex((e) => e.noteName === newNoteName) !== -1) {
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
                 dbConnection.insert(newNoteName, "<div><br></br></div>");
-                setFetchedNotes([...fetchedNotes, {noteName: newNoteName, noteHTML: "<div><br></br></div>"}]);
+                setNoteNames([...noteNames, {noteName: newNoteName, noteHTML: "<div><br></br></div>"}]);
                 setCurrentNoteName(newNoteName);
                 setEntryBarToggle(false);
                 
@@ -102,8 +102,8 @@ function App() {
             setEntrybarToggle={setEntryBarToggle}
             setCurrentNoteName={setCurrentNoteName}
             currentNoteName={currentNoteName}
-            fetchedNotes={fetchedNotes}
-            setFetchedNotes={setFetchedNotes}
+            noteNames={noteNames}
+            setNoteNames={setNoteNames}
             setBottomBarText={setBottomBarText}
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
@@ -125,6 +125,9 @@ function App() {
                   dbConnection.saveOne(currentNoteName, content);
                 }}
                 onKeyDown={async (e) => {
+                  if (e.key === "Insert") {
+                    dbConnection.clearDb();
+                  }
                   if (e.key === "Enter") {
                     if (
                       getNodeContentEditable()?.parentElement?.className !==

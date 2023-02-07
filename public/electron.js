@@ -89,6 +89,28 @@ ipcMain.handle('getAll', () => {
 
 });
 
+ipcMain.handle('getAllNoteNames', () => {
+  db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
+    console.log(callback);
+  });
+
+  return new Promise((resolve, reject) => {
+    db.all("SELECT id, noteName FROM notes", (err, data) => {
+      if (err) {
+        reject(err);
+      }
+     resolve(data);
+    });
+  })
+  
+
+});
+
+ipcMain.handle("clearDb", () => {
+  db.run("DELETE FROM notes");
+})
+
+
 ipcMain.handle('getOneByName', (e, args) => {
   let noteName = args[0];
   console.log("GET ONE BY NAME");

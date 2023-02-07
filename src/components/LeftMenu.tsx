@@ -8,8 +8,8 @@ interface LeftMenuProps {
   setEntrybarToggle: any;
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
-  fetchedNotes: noteList;
-  setFetchedNotes: any;
+  noteNames: noteList;
+  setNoteNames: any;
   setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
@@ -19,8 +19,8 @@ const LeftMenu = ({
   setEntrybarToggle,
   setCurrentNoteName,
   currentNoteName,
-  fetchedNotes,
-  setFetchedNotes,
+  noteNames,
+  setNoteNames,
   setBottomBarText,
   setHelpOpen,
   helpOpen
@@ -29,11 +29,11 @@ const LeftMenu = ({
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   useEffect(() => {
     const getNotesFromDB = async () => {
-      setFetchedNotes(await dbConnection.getAll());
+      setNoteNames(await dbConnection.getAllNoteNames());
     }
     
     getNotesFromDB();
-  }, [setFetchedNotes]);
+  }, [setNoteNames]);
 
 
 
@@ -86,7 +86,7 @@ const LeftMenu = ({
             onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
               dbConnection.deleteOneByName(currentNoteName);
-              setFetchedNotes(fetchedNotes.filter(x => x.noteName != currentNoteName));
+              setNoteNames(noteNames.filter(x => x.noteName != currentNoteName));
             }}
           >
             &#xE74D;
@@ -112,9 +112,11 @@ const LeftMenu = ({
           <button
             onMouseEnter={() => setBottomBarText("Import data")}
             onClick={() => {
-              controls.import().then(() => {
+              controls.import().then(async () => {
+                let notes = await dbConnection.getAllNoteNames();
+                console.log(notes);
                 enqueueSnackbar("Data imported");
-                setFetchedNotes(getData().notes);
+                setNoteNames(notes);
               });
             }}
           >
@@ -130,11 +132,11 @@ const LeftMenu = ({
           }}
         />
         <div className="fileList">
-          {fetchedNotes.length &&
-            fetchedNotes
+          {noteNames.length &&
+            noteNames
               .filter(
                 (e) =>
-                  e.noteName
+                 e.noteName && e.noteName
                     .toLowerCase()
                     .includes(noteSearchQuery.toLowerCase()) ||
                   e.noteName === currentNoteName
@@ -142,8 +144,8 @@ const LeftMenu = ({
               .map((e: note, i: Number) => {
                 return (
                   <FileEntry
-                    setFetchedNotes={setFetchedNotes}
-                    fetchedNotes={fetchedNotes}
+                    setNoteNames={setNoteNames}
+                    noteNames={noteNames}
                     keyNumber={i}
                     currentNoteName={currentNoteName}
                     setCurrentNoteName={setCurrentNoteName}

@@ -8,8 +8,8 @@ interface FileEntryProps {
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
   name: string;
-  fetchedNotes: noteList;
-  setFetchedNotes: React.Dispatch<React.SetStateAction<any>>;
+  noteNames: noteList;
+  setNoteNames: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const FileEntry = ({
@@ -17,10 +17,11 @@ const FileEntry = ({
   currentNoteName,
   setCurrentNoteName,
   name,
-  fetchedNotes,
-  setFetchedNotes
+  noteNames,
+  setNoteNames
 }: FileEntryProps) => {
   const [entryBarToggle, setEntryBarToggle] = useState(false);
+  const [localNoteName, setLocalNoteName] = useState(name);
   return (
     <>
       <div
@@ -30,7 +31,7 @@ const FileEntry = ({
           currentNoteName === name ? "fileEntry selectedEntry" : "fileEntry"
         }
       >
-        <p>{name}</p>
+        <p>{localNoteName}</p>
         <button
           className="actionButton editNoteNameButton"
           onClick={() => {
@@ -44,11 +45,12 @@ const FileEntry = ({
         <EntryBar
           defaultText="Enter note name to change to"
           fireAction={(newNote: string) => {
-            let updatedArray = fetchedNotes;
+            let updatedArray = noteNames;
             let index = updatedArray.findIndex(e => e.noteName === name);
             updatedArray[index].noteName = newNote;
-            setFetchedNotes(updatedArray);
+            setNoteNames(updatedArray);
             dbConnection.updateName(newNote, name);
+            setLocalNoteName(newNote);
           }}
           setEntryBarToggle={setEntryBarToggle}
         />
