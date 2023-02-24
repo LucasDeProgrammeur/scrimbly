@@ -1,15 +1,13 @@
+
 const sqlite3 = require('sqlite3');
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
 const defaultData = { notes: [] };
 // let remote = require("electron").remote;
 // let dialog = remote.require("electron").dialog;
-
+const DataHandler = require("./DataHandler.js");
 // let db = new sqlite3.Database(":memory:");
 
-const valueExists = () => {
-  
-}
 
 contextBridge.exposeInMainWorld("controls", {
   minimize: () => {

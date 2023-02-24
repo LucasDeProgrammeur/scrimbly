@@ -3,10 +3,26 @@ import { render, screen, queryByAttribute, fireEvent, prettyDOM } from '@testing
 import ReactLoader from './components/ReactLoader';
 import { keyboard } from '@testing-library/user-event/dist/keyboard';
 import userEvent from '@testing-library/user-event';
+import DataHandler from "../public/DataHandler";
+import { ContextBridge } from 'electron';
+import { ipcMain } from 'electron';
 
+jest.mock(
+  'electron',
+  () => {
+    const mockIpcMain = {
+      on: jest.fn().mockReturnThis(),
+    };
+    return { ipcMain: mockIpcMain };
+  },
+  { virtual: true },
+);
 
 const view = render(<ReactLoader />);
 const getByClass = queryByAttribute.bind(null, "class")
+jest.mock("../mocks/electronMock.js");
+
+
 
 test('newNote', () => {
 
@@ -53,6 +69,4 @@ test('deleteNote', () => {
   fireEvent.click(deleteButton!);
   const fileList = getByClass(view.container, 'fileList')
   expect(fileList?.children.length).toBe(0);
-
-
-})
+});

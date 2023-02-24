@@ -1,5 +1,10 @@
 {
   "name": "scrimbly",
+  "jest": {
+    "moduleNameMapper": {
+      "electron": "<rootDir>/mocks/electronMock.js"
+    }
+  },
   "version": "0.1.0",
   "main": "public/electron.js",
   "homepage": "./",

@@ -49,7 +49,7 @@ const FileEntry = ({
             let index = updatedArray.findIndex(e => e.noteName === name);
             updatedArray[index].noteName = newNote;
             setNoteNames(updatedArray);
-            dbConnection.updateName(newNote, name);
+            window.dbConnection.updateName(newNote, name);
             setLocalNoteName(newNote);
           }}
           setEntryBarToggle={setEntryBarToggle}

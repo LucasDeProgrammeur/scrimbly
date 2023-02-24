@@ -29,7 +29,7 @@ const LeftMenu = ({
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   useEffect(() => {
     const getNotesFromDB = async () => {
-      setNoteNames(await dbConnection.getAllNoteNames());
+      setNoteNames(await window.dbConnection.getAllNoteNames());
     }
     
     getNotesFromDB();
@@ -85,7 +85,7 @@ const LeftMenu = ({
             className="deleteNoteButton"
             onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
-              dbConnection.deleteOneByName(currentNoteName);
+              window.dbConnection.deleteOneByName(currentNoteName);
               setNoteNames(noteNames.filter(x => x.noteName != currentNoteName));
             }}
           >
@@ -112,8 +112,8 @@ const LeftMenu = ({
           <button
             onMouseEnter={() => setBottomBarText("Import data")}
             onClick={() => {
-              controls.import().then(async () => {
-                let notes = await dbConnection.getAllNoteNames();
+              window.controls.import().then(async () => {
+                let notes = await window.dbConnection.getAllNoteNames();
                 console.log(notes);
                 enqueueSnackbar("Data imported");
                 setNoteNames(notes);

@@ -5,6 +5,10 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 let db = new sqlite3.Database("./scrimblydb.db");
 
+const DataHandler = require("./DataHandler");
+
+const handler = new DataHandler();
+
 function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -69,82 +73,29 @@ ipcMain.handle('isMaximized', () => {
 ipcMain.handle('updateName', (e, args) => {
   let newNoteName = args[0];
   let oldNoteName = args[1];
-  db.run(`UPDATE notes SET noteName = '${newNoteName}' WHERE noteName = '${oldNoteName}'`);
+  handler.updateName(newNoteName, oldNoteName)
 })
 
-ipcMain.handle('getAll', () => {
-  db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-    console.log(callback);
-  });
-
-  return new Promise((resolve, reject) => {
-    db.all("SELECT noteName, noteHTML FROM notes", (err, data) => {
-      if (err) {
-        reject(err);
-      }
-     resolve(data);
-    });
-  })
-  
-
-});
+ipcMain.handle('getAll', () => { return handler.getAll()});
 
 ipcMain.handle('getAllNoteNames', () => {
-  db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-    console.log(callback);
-  });
-
-  return new Promise((resolve, reject) => {
-    db.all("SELECT id, noteName FROM notes", (err, data) => {
-      if (err) {
-        reject(err);
-      }
-     resolve(data);
-    });
-  })
-  
-
+  return handler.getAllNoteNames();
 });
 
 ipcMain.handle("clearDb", () => {
-  db.run("DELETE FROM notes");
+  return handler.clearDb();
 })
 
 
 ipcMain.handle('getOneByName', (e, args) => {
   let noteName = args[0];
-  console.log("GET ONE BY NAME");
-  db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-    console.log(callback);
-  });
-
-  return new Promise((resolve, reject) => {
-    db.get(`SELECT noteName, noteHTML FROM notes WHERE noteName = '${noteName}'`, (err, data) => {
-      if (err) {
-        
-        reject(err);
-      }
-      console.log(data);
-     resolve(data);
-    });
-  })
-  
-
+  return handler.getOneByName(noteName);
 });
 
 ipcMain.handle("saveOne", (e, args) => {
   let noteName = args[0];
   let noteHTML = args[1];
-  return new Promise((resolve, reject) => {
-    db.exec(`UPDATE notes SET noteHTML = '${noteHTML}' WHERE noteName = '${noteName}'`, (err) => {
-      if (err) {
-        reject(err);
-      }
-    })
-    resolve();
-
-  })
-  
+  return handler.saveOne(noteName, noteHTML);
 })
 
 ipcMain.handle("deleteOneByName", (e, args) => {
@@ -153,14 +104,9 @@ ipcMain.handle("deleteOneByName", (e, args) => {
 })
 
 ipcMain.handle("insert", (e, args) => {
-  db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-    console.log(callback);
-  });
-  let queryString = `INSERT INTO notes (noteName, noteHTML) VALUES ('${args[0]}', '${args[1]}')`;
-  console.log(queryString);
-  db.exec(queryString, (callback) => {
-    console.log(callback);
-  });
+  let noteName = args[0];
+  let noteHTML = args[1];
+  return handler.insert(noteName, noteHTML);
 });
 
 

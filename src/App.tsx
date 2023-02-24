@@ -19,6 +19,15 @@ import { isRangeAtEnd } from "./helpers/setRangeAfter";
 import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
 
+
+declare global {
+  interface Window {
+    controls: any
+    dbConnection: any
+  }
+
+}
+
 function App() {
   let [content, setContent] = useState("");
   let [entryBarToggle, setEntryBarToggle] = useState(false);
@@ -41,7 +50,7 @@ function App() {
 
   useEffect(() => {
     let syncContentFromNote = async () => {
-      let newContent = await dbConnection.getOneByName(currentNoteName);
+      let newContent = await window.dbConnection.getOneByName(currentNoteName);
       let target = document.getElementsByClassName("editable")[0] as HTMLElement;
       if (target === undefined) return;
       if (currentNoteName === "") return;
@@ -89,7 +98,8 @@ function App() {
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
-                dbConnection.insert(newNoteName, "<div><br></br></div>");
+                //ipcRenderer.send("insert", [newNoteName, "<div><br></br></div>"])
+                window.dbConnection.insert(newNoteName);
                 setNoteNames([...noteNames, {noteName: newNoteName, noteHTML: "<div><br></br></div>"}]);
                 setCurrentNoteName(newNoteName);
                 setEntryBarToggle(false);
@@ -122,11 +132,13 @@ function App() {
                 }}
                 onKeyUp={(e) => {
                   setContent(handleKeyPress(e, entryBarToggle) || "");
-                  dbConnection.saveOne(currentNoteName, content);
+                  //ipcRenderer.send("saveOne", [currentNoteName, content])
+                  window.dbConnection.saveOne(currentNoteName, content);
                 }}
                 onKeyDown={async (e) => {
                   if (e.key === "Insert") {
-                    dbConnection.clearDb();
+                    window.dbConnection.clearDb();
+                    //ipcRenderer.send("clearDb")
                   }
                   if (e.key === "Enter") {
                     if (
