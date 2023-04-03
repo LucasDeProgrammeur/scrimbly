@@ -8,31 +8,27 @@ import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
 import createEnterElements from "./helpers/createEnterElements";
 import getNodeContentEditable from "./helpers/getNodeContentEditable";
-import {
-  getData,
-  getNoteContentByName,
-  resetData,
-  saveNewNote,
-  saveSpecificNote,
-} from "./helpers/io/storageFunctions";
 import { isRangeAtEnd } from "./helpers/setRangeAfter";
 import handleKeyPress from "./structures/keyPressHandler";
 // import initDB from "./io/dbFunctions";
 
-
 declare global {
   interface Window {
-    controls: any
-    dbConnection: any
+    controls: any;
+    dbConnection: any;
   }
+}
 
+const getNoteNames = async (setter: ((arg0: any) => void)) => {
+  console.log(await window.dbConnection.getAllNoteNames()); 
+  setter(await window.dbConnection.getAllNoteNames());
 }
 
 function App() {
   let [content, setContent] = useState("");
   let [entryBarToggle, setEntryBarToggle] = useState(false);
   let [currentNoteName, setCurrentNoteName] = useState("");
-  let [noteNames, setNoteNames] = useState([]);
+  let [noteNames, setNoteNames] = useState<string[]>([]);
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -49,29 +45,24 @@ function App() {
   });
 
   useEffect(() => {
+    if (currentNoteName === "") return;
     let syncContentFromNote = async () => {
       let newContent = await window.dbConnection.getOneByName(currentNoteName);
-      let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+      let target = document.getElementsByClassName(
+        "editable"
+      )[0] as HTMLElement;
       if (target === undefined) return;
-      if (currentNoteName === "") return;
-      if (getNoteContentByName(currentNoteName) !== null) {
-        setContent(newContent.noteHTML);
-      } else {
-        setCurrentNoteName("");
-      }
+      setContent(newContent.noteHTML);
       target.innerHTML = newContent.noteHTML;
-    }
+    };
 
     syncContentFromNote();
-
   }, [currentNoteName]);
 
   useEffect(() => {
-    if (currentNoteName) {
-      // handleCounter(target, setCharAmount, setWordAmount);
-      saveSpecificNote(currentNoteName, content);
-    }
-  }, [content, currentNoteName]);
+    getNoteNames(setNoteNames);
+    console.log(noteNames);
+  }, [])
 
   useEffect(() => {
     if (!noteNames.length) setCurrentNoteName("");
@@ -84,7 +75,7 @@ function App() {
         className="App"
         onKeyDown={(e) => {
           if (e.key === "Home") {
-            resetData();
+            window.dbConnection.resetData();
           }
         }}
       >
@@ -94,16 +85,21 @@ function App() {
               setEntryBarToggle={setEntryBarToggle}
               defaultText="Enter new note name..."
               fireAction={(newNoteName: string) => {
-                if (noteNames.findIndex((e) => e.noteName === newNoteName) !== -1) {
+                if (
+                  noteNames.length &&
+                  noteNames.findIndex((e) => e.noteName === newNoteName) !== -1
+                ) {
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
                 //ipcRenderer.send("insert", [newNoteName, "<div><br></br></div>"])
-                window.dbConnection.insert(newNoteName);
-                setNoteNames([...noteNames, {noteName: newNoteName, noteHTML: "<div><br></br></div>"}]);
+                window.dbConnection.insert(newNoteName, "<div></div>");
+                setNoteNames(
+                  [...noteNames, newNoteName]
+                );
                 setCurrentNoteName(newNoteName);
                 setEntryBarToggle(false);
-                
+
                 document.getElementsByClassName("editable")[0].focus();
               }}
             />
@@ -118,46 +114,45 @@ function App() {
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
           />
-            <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
-            <>
-              <div
-                contentEditable={currentNoteName ? "true" : "false"}
-                suppressContentEditableWarning={true}
-                onClick={(e) => {
-                  if (!currentNoteName) return;
-                  setContent(
-                    document.getElementsByClassName("editable")[0].innerHTML
-                  );
-                  saveSpecificNote(currentNoteName, content);
-                }}
-                onKeyUp={(e) => {
-                  setContent(handleKeyPress(e, entryBarToggle) || "");
-                  //ipcRenderer.send("saveOne", [currentNoteName, content])
-                  window.dbConnection.saveOne(currentNoteName, content);
-                }}
-                onKeyDown={async (e) => {
-                  if (e.key === "Insert") {
-                    window.dbConnection.clearDb();
-                    //ipcRenderer.send("clearDb")
+          <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
+          <>
+            <div
+              contentEditable={currentNoteName ? "true" : "false"}
+              suppressContentEditableWarning={true}
+              onClick={(e) => {
+                if (!currentNoteName) return;
+                setContent(
+                  document.getElementsByClassName("editable")[0].innerHTML
+                );
+
+              }}
+              onKeyUp={(e) => {
+                setContent(handleKeyPress(e, entryBarToggle) || "");
+                //ipcRenderer.send("saveOne", [currentNoteName, content])
+                window.dbConnection.saveOne(currentNoteName, content);
+              }}
+              onKeyDown={async (e) => {
+                if (e.key === "Insert") {
+                  window.dbConnection.clearDb();
+                  //ipcRenderer.send("clearDb")
+                }
+                if (e.key === "Enter") {
+                  if (
+                    getNodeContentEditable()?.parentElement?.className !==
+                      "App" &&
+                    isRangeAtEnd()
+                  ) {
+                    createEnterElements(e);
                   }
-                  if (e.key === "Enter") {
-                    if (
-                      getNodeContentEditable()?.parentElement?.className !==
-                        "App" &&
-                      isRangeAtEnd()
-                    ) {
-                      createEnterElements(e);
-                    }
-                  }
-                }}
-                className="editable"
-              >
-                <div>
-                  <br></br>
-                </div>
+                }
+              }}
+              className="editable"
+            >
+              <div>
+                <br></br>
               </div>
-            </>
-         
+            </div>
+          </>
         </main>
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>

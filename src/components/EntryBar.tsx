@@ -1,4 +1,4 @@
-import { getData } from "../helpers/io/storageFunctions";
+import { useState } from "react";
 
 interface EntryBarProps {
   defaultText: string;
@@ -10,6 +10,8 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   fireAction,
   setEntryBarToggle
 }: EntryBarProps) => {
+  document.getElementById("entryBarInput")?.addEventListener('keypress', console.log)
+  const [inputValue, setInputValue] = useState("");
   return (
     <div className="entryBar" id="entryBar">
       <input
@@ -30,7 +32,9 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
         autoFocus
         placeholder={defaultText}
         type="text"
-      ></input>
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
+      />
     </div>
   );
 };

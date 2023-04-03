@@ -9,7 +9,6 @@ class DataHandler {
 
     getAll () {
         this.db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-            //console.log("Callback: " + callback);
           });
         
           return new Promise((resolve, reject) => {
@@ -29,13 +28,14 @@ class DataHandler {
     getAllNoteNames() {
       this.db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
       });
-    
+
       return new Promise((resolve, reject) => {
         this.db.all("SELECT id, noteName FROM notes", (err, data) => {
           if (err) {
             reject(err);
           }
-         resolve(data);
+         resolve(data.map(e => e["noteName"]));
+         
         });
       })
     }
@@ -45,9 +45,7 @@ class DataHandler {
     }
 
     getOneByName(noteName) {
-      //console.log("GET ONE BY NAME");
       this.db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-        //console.log(callback);
       });
     
       return new Promise((resolve, reject) => {
@@ -56,7 +54,7 @@ class DataHandler {
             
             reject(err);
           }
-          //console.log(data);
+
          resolve(data);
         });
       })
@@ -81,12 +79,12 @@ class DataHandler {
 
     insert(noteName, noteHTML) {
       this.db.run("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)", (callback) => {
-        //console.log(callback);
+
       });
       let queryString = `INSERT INTO notes (noteName, noteHTML) VALUES ('${noteName}', '${noteHTML}')`;
-      //console.log(queryString);
+      
       this.db.exec(queryString, (callback) => {
-        //console.log(callback);
+          console.log("INSERTED")
       });
     }
     

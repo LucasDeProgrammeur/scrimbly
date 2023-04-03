@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getData, removeNote } from "../helpers/io/storageFunctions";
 import { useSnackbar } from "notistack";
 import { noteList, note } from "../types/ioTypes";
 import FileEntry from "./FileEntry";
@@ -8,7 +7,7 @@ interface LeftMenuProps {
   setEntrybarToggle: any;
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
-  noteNames: noteList;
+  noteNames: string[];
   setNoteNames: any;
   setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,21 +26,11 @@ const LeftMenu = ({
 }: LeftMenuProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
-  useEffect(() => {
-    const getNotesFromDB = async () => {
-      setNoteNames(await window.dbConnection.getAllNoteNames());
-    }
-    
-    getNotesFromDB();
-  }, [setNoteNames]);
-
-
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
     const leftSide = document.getElementsByClassName("leftMenu")[0];
     const rightSide = document.getElementsByClassName("editable")[0] as HTMLElement;
-    console.log(rightSide);
     const container = document.getElementsByClassName("App")[0] as HTMLElement;
     var moveX =
       leftSide.getBoundingClientRect().width +
@@ -86,7 +75,7 @@ const LeftMenu = ({
             onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
               window.dbConnection.deleteOneByName(currentNoteName);
-              setNoteNames(noteNames.filter(x => x.noteName != currentNoteName));
+              setNoteNames(noteNames.filter(x => x !== currentNoteName));
             }}
           >
             &#xE74D;
@@ -132,27 +121,23 @@ const LeftMenu = ({
           }}
         />
         <div className="fileList">
-          {noteNames.length &&
-            noteNames
-              .filter(
-                (e) =>
-                 e.noteName && e.noteName
-                    .toLowerCase()
-                    .includes(noteSearchQuery.toLowerCase()) ||
-                  e.noteName === currentNoteName
-              )
-              .map((e: note, i: Number) => {
+           {
+            noteNames.map((e, i) => {
+              if (e.toLowerCase().includes(noteSearchQuery.toLowerCase()) || e === currentNoteName) {
                 return (
                   <FileEntry
                     setNoteNames={setNoteNames}
                     noteNames={noteNames}
-                    keyNumber={i}
+                    key={i as React.Key}
                     currentNoteName={currentNoteName}
                     setCurrentNoteName={setCurrentNoteName}
-                    name={e.noteName}
+                    name={e}
                   />
                 );
-              })}
+              }
+             
+            })
+           }
         </div>
       </div>
       <div className="resizerSpace"></div>
