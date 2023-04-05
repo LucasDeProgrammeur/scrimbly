@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { noteList, note } from "../types/ioTypes";
 import FileEntry from "./FileEntry";
+import EntryBar from "./EntryBar";
 
 interface LeftMenuProps {
-  setEntrybarToggle: any;
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
-  noteNames: string[];
-  setNoteNames: any;
   setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
 }
 
+const getNoteNames = async (setter: (arg0: any) => void) => {
+  setter(await window.dbConnection.getAllNoteNames());
+};
+
 const LeftMenu = ({
-  setEntrybarToggle,
   setCurrentNoteName,
   currentNoteName,
-  noteNames,
-  setNoteNames,
   setBottomBarText,
   setHelpOpen,
   helpOpen
 }: LeftMenuProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
+  let [entryBarToggle, setEntryBarToggle] = useState(false);
+  let [noteNames, setNoteNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    getNoteNames(setNoteNames);
+  }, []);
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
@@ -58,6 +62,10 @@ const LeftMenu = ({
     });
   }, []);
 
+  useEffect(() => {
+    console.log(noteNames)
+  } , [noteNames])
+
   return (
     <>
       <div className={!helpOpen ? "leftMenu" : "leftMenu disabled"} draggable>
@@ -66,7 +74,7 @@ const LeftMenu = ({
             className="newNoteButton"
             onMouseEnter={() => setBottomBarText("New Note")}
             onMouseLeave={() => setBottomBarText("")}
-            onClick={() => setEntrybarToggle(true)}
+            onClick={() => setEntryBarToggle(true)}
           >
             &#xE710;
           </button>
@@ -91,7 +99,7 @@ const LeftMenu = ({
           <button
             onMouseEnter={() => setBottomBarText("Export data")}
             onClick={() => {
-              controls.export().then(() => {
+              window.controls.export().then(() => {
                 enqueueSnackbar("Data exported");
               });
             }}
@@ -100,13 +108,15 @@ const LeftMenu = ({
           </button>
           <button
             onMouseEnter={() => setBottomBarText("Import data")}
-            onClick={() => {
-              window.controls.import().then(async () => {
-                let notes = await window.dbConnection.getAllNoteNames();
-                console.log(notes);
+            onClick={async () => {
+              let data = await window.controls.import()
+                if (!data) {
+                  enqueueSnackbar("Scrimbly was unable to import these notes");
+                  return;
+                }
+                setNoteNames(data);
+                
                 enqueueSnackbar("Data imported");
-                setNoteNames(notes);
-              });
             }}
           >
             &#xE8E5;
@@ -122,9 +132,8 @@ const LeftMenu = ({
         />
         <div className="fileList">
            {
-            noteNames.map((e, i) => {
-              if (e.toLowerCase().includes(noteSearchQuery.toLowerCase()) || e === currentNoteName) {
-                return (
+            noteNames.map((e, i) => (
+                  e.toLowerCase().includes(noteSearchQuery.toLocaleLowerCase())  || e === currentNoteName) ?
                   <FileEntry
                     setNoteNames={setNoteNames}
                     noteNames={noteNames}
@@ -132,15 +141,37 @@ const LeftMenu = ({
                     currentNoteName={currentNoteName}
                     setCurrentNoteName={setCurrentNoteName}
                     name={e}
-                  />
-                );
-              }
+                  /> : <></>
+            )
              
-            })
+            
            }
         </div>
       </div>
       <div className="resizerSpace"></div>
+      {entryBarToggle && (
+            <EntryBar
+              setEntryBarToggle={setEntryBarToggle}
+              defaultText="Enter new note name..."
+              fireAction={(newNoteName: string) => {
+                if (
+                  noteNames.length &&
+                  noteNames.findIndex((e) => e === newNoteName) !== -1
+                ) {
+                  enqueueSnackbar("Note name already exists");
+                  return;
+                }
+                window.dbConnection.insert(newNoteName, "");
+                setNoteNames(
+                  [...noteNames, newNoteName]
+                );
+                setCurrentNoteName(newNoteName);
+                setEntryBarToggle(false);
+
+                document.getElementsByClassName("editable")[0].focus();
+              }}
+            />
+          )}
     </>
   );
 };

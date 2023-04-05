@@ -37,9 +37,8 @@ contextBridge.exposeInMainWorld("controls", {
       importData.map((e) => {
         ipcRenderer.invoke("insert", [e.noteName, e.noteHTML]);
       })
+      return importData.map(e => e.noteName);
     } catch (e) {
-      console.log(e);
-      alert("Unable to import this file.");
     }
   },
 });

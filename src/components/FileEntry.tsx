@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { noteList } from "../types/ioTypes";
 import EntryBar from "./EntryBar";
 
 interface FileEntryProps {

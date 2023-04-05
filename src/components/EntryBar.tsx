@@ -10,7 +10,6 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   fireAction,
   setEntryBarToggle
 }: EntryBarProps) => {
-  document.getElementById("entryBarInput")?.addEventListener('keypress', console.log)
   const [inputValue, setInputValue] = useState("");
   return (
     <div className="entryBar" id="entryBar">

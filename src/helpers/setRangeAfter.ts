@@ -2,7 +2,6 @@ import getNodeContentEditable from "./getNodeContentEditable";
 
 const setRangeAfter = (newElement: HTMLElement, rangeSetter = 0) => {
   let range = document.createRange();
-  // range.setStartAfter(newElement);
   if (rangeSetter > 0) {
     range.setStart(newElement, rangeSetter)
     window.getSelection()?.removeAllRanges();
@@ -15,11 +14,9 @@ const setRangeAfter = (newElement: HTMLElement, rangeSetter = 0) => {
   window.getSelection()?.addRange(range);
 };
 
-
+// Put cursor on exact element. rangeSetter determining where in the text 
 const setRangeOn = (newElement: HTMLElement, rangeSetter = 1) => {
   let range = document.createRange();
-  // range.setStartAfter(newElement);
-
   range.setStart(newElement, rangeSetter);
   window.getSelection()?.removeAllRanges();
   window.getSelection()?.addRange(range);

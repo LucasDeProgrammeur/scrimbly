@@ -22,7 +22,6 @@ export default function checkForLineFormatting(editable: Element) {
   ];
 
   let children = editable.querySelectorAll("div");
-
   children.forEach((e) => {
     elementTypes.forEach((typesE) => {
       if (e.innerText.includes(typesE.syntax)) {

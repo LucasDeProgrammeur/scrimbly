@@ -83,9 +83,7 @@ class DataHandler {
       });
       let queryString = `INSERT INTO notes (noteName, noteHTML) VALUES ('${noteName}', '${noteHTML}')`;
       
-      this.db.exec(queryString, (callback) => {
-          console.log("INSERTED")
-      });
+      this.db.exec(queryString);
     }
     
     

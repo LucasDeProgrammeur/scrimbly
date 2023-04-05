@@ -2,17 +2,12 @@ import React from "react";
 import checkForInlineFormatting from "../helpers/checkForFormatting";
 import checkForLineFormatting from "../helpers/checkForLineFormatting";
 import setEndOfContenteditable from "../helpers/setEndofContenteditable";
+import createDefaultElements from "../helpers/createDefaultElements";
 
-const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
-    if (entryBarToggle) {
-        document.getElementById("entryBar")?.focus();
-        e.preventDefault();
-        return;
-      }
-
-
+const handleKeyPress = (e: React.KeyboardEvent) => {
       const target = e.target as HTMLInputElement;
 
+      // Replace any images with specialized image element
       [...target.children].forEach(el => {
         
         if (el.nodeName === "IMG") {  
@@ -35,16 +30,7 @@ const handleKeyPress = (e: React.KeyboardEvent, entryBarToggle: boolean ) => {
           }
         })
       })
-
-      if (target.innerHTML === "<br>" || target.innerHTML === "") {
-        e.preventDefault();
-        if (e.key.length === 1) {
-          target.innerHTML = "<div>" + e.key + "</div>";
-          setEndOfContenteditable(e.target);
-        } else {
-          target.innerHTML = "<div><br></div>";
-        }
-      }
+      createDefaultElements(e)
 
 
       target.focus();

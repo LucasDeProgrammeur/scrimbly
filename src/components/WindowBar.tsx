@@ -8,19 +8,19 @@ const WindowBar = () => {
         <p>Notes development build</p>
       </div>
       <div className="windowControls">
-        <button onClick={() => controls.minimize()} id="minimize">
+        <button onClick={() => window.controls.minimize()} id="minimize">
           &#xE921;
         </button>
         <button
           onClick={() => {
-            maximized ? controls.restore() : controls.maximize();
+            maximized ? window.controls.restore() : window.controls.maximize();
             setMaximized(!maximized);
           }}
           id="maximize"
         >
           {maximized ? "" : ""}
         </button>
-        <button onClick={() => controls.close()} id="close">
+        <button onClick={() => window.controls.close()} id="close">
           &#xE8BB;
         </button>
       </div>
