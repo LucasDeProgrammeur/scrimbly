@@ -1,11 +1,11 @@
-import { useSnackbar } from "notistack";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
 import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
 import handleKeyPress from "./structures/keyPressHandler";
+import EntryBar from "./components/EntryBar";
 
 declare global {
   interface Window {
@@ -14,14 +14,16 @@ declare global {
   }
 }
 
-
-
 function App() {
   let [content, setContent] = useState("");
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  let [entryBarDefaultText, setEntryBarDefaultText] = useState("Enter new note name");
+  let [entryBarOpen, setEntryBarOpen] = useState(false);
+  let [entryBarAction, setEntryBarAction] = useState(() => {})
+
+  let entryBarProps = {setEntryBarOpen, setEntryBarAction, setEntryBarDefaultText}
   let cbox = document.querySelectorAll("input");
 
   cbox.forEach((cb) => {
@@ -40,16 +42,14 @@ function App() {
       let target = document.getElementsByClassName(
         "editable"
       )[0] as HTMLElement;
-      if (target === undefined) return;
-      setContent(newContent.noteHTML);
+      if (newContent === undefined) return;
+      console.log(newContent);
+      setContent(newContent.noteHTML || "");
       target.innerHTML = newContent.noteHTML;
     };
 
     syncContentFromNote();
   }, [currentNoteName]);
-
-
-
 
   return (
     <>
@@ -62,6 +62,12 @@ function App() {
           }
         }}
       >
+        {entryBarOpen && <EntryBar
+          defaultText={entryBarDefaultText}
+          setEntryBarToggle={setEntryBarOpen}
+          fireAction={entryBarAction}
+        /> 
+}
         <main>
           <LeftMenu
             setCurrentNoteName={setCurrentNoteName}
@@ -69,10 +75,12 @@ function App() {
             setBottomBarText={setBottomBarText}
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
+            entryBarProps={entryBarProps}
           />
           <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
           <>
             <div
+              tabIndex={2}
               contentEditable={currentNoteName ? "true" : "false"}
               suppressContentEditableWarning={true}
               onClick={(e) => {

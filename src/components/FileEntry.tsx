@@ -1,5 +1,4 @@
 import { useState } from "react";
-import EntryBar from "./EntryBar";
 
 interface FileEntryProps {
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
@@ -7,6 +6,7 @@ interface FileEntryProps {
   name: string;
   noteNames: string[];
   setNoteNames: React.Dispatch<React.SetStateAction<any>>;
+  entryBarProps: any;
 }
 
 const FileEntry = ({
@@ -14,9 +14,9 @@ const FileEntry = ({
   setCurrentNoteName,
   name,
   noteNames,
-  setNoteNames
+  setNoteNames,
+  entryBarProps
 }: FileEntryProps) => {
-  const [entryBarToggle, setEntryBarToggle] = useState(false);
   const [localNoteName, setLocalNoteName] = useState(name);
   return (
     <>
@@ -29,27 +29,23 @@ const FileEntry = ({
         <p>{localNoteName}</p>
         <button
           className="actionButton editNoteNameButton"
+          aria-label="edit note name"
           onClick={() => {
-            setEntryBarToggle(true);
+            entryBarProps.setEntryBarOpen(true)
+            entryBarProps.setEntryBarDefaultText("Enter new note name") 
+            entryBarProps.setEntryBarAction(() => (newNote: string) => {
+              let updatedArray = noteNames;
+              let index = updatedArray.findIndex(e => e === name);
+              updatedArray[index] = newNote;
+              setNoteNames(updatedArray);
+              window.dbConnection.updateName(newNote, name);
+              setLocalNoteName(newNote);
+            })
           }}
         >
           &#xE70F;
         </button>
       </div>
-      {entryBarToggle && (
-        <EntryBar
-          defaultText="Enter note name to change to"
-          fireAction={(newNote: string) => {
-            let updatedArray = noteNames;
-            let index = updatedArray.findIndex(e => e === name);
-            updatedArray[index] = newNote;
-            setNoteNames(updatedArray);
-            window.dbConnection.updateName(newNote, name);
-            setLocalNoteName(newNote);
-          }}
-          setEntryBarToggle={setEntryBarToggle}
-        />
-      )}
     </>
   );
 };

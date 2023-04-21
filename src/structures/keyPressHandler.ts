@@ -1,7 +1,6 @@
 import React from "react";
 import checkForInlineFormatting from "../helpers/checkForFormatting";
 import checkForLineFormatting from "../helpers/checkForLineFormatting";
-import setEndOfContenteditable from "../helpers/setEndofContenteditable";
 import createDefaultElements from "../helpers/createDefaultElements";
 
 const handleKeyPress = (e: React.KeyboardEvent) => {

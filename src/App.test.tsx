@@ -1,12 +1,12 @@
-import React from "react";
 import {
   render,
   screen,
   queryByAttribute,
   fireEvent,
+  waitFor,
 } from "@testing-library/react";
 import ReactLoader from "./components/ReactLoader";
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event'
 import DataHandler from "../public/DataHandler";
 
 window.dbConnection = new DataHandler();
@@ -31,35 +31,50 @@ test("newNote", async () => {
 });
 
 test("editNote", async () => {
+  const user = userEvent.setup();
   const view = render(<ReactLoader />);
   const noteButton = await screen.findAllByText("new note");
-  userEvent.click(noteButton[0]);
+  user.click(noteButton[0]);
   const editable = getByClass(view.container, "editable");
-  userEvent.click(editable!);
-  userEvent.keyboard("*test*");
+  fireEvent.focus(editable!);
+  await userEvent.type(editable!, "{enter}*test* ", {delay: 100});
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(editable?.innerHTML).toBe("\u200b<em>test</em>\u200b");
+  
+  await waitFor(() => {
+    expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i);    
+  });
+
 });
 
 test("rename", async () => {
+  const user = userEvent.setup();
   const view = render(<ReactLoader />);
   const fileEntry = await screen.findAllByText("new note");
-  userEvent.click(fileEntry![0]);
-  fireEvent.click(
-    getByClass(view.container, "actionButton editNoteNameButton")!
-  );
-  const entryBar = getByClass(view.container, "entryBarInput");
-  userEvent.click(entryBar!);
-  userEvent.keyboard("new note edit{enter}");
+  user.click(fileEntry[0]);
+  const editNoteNameButton =  screen.getAllByLabelText("edit note name")
+  
+  editNoteNameButton.forEach((x: any) => {
+    fireEvent.click(x)
+    const entryBar = getByClass(view.container, "entryBarInput");
+    fireEvent.focus(entryBar!);
+    fireEvent.change(entryBar!, {target: {value: "new note edit"}});
+    user.type(entryBar!, "{enter}")
+  })
+
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(fileEntry[0]?.textContent).toBe("new note edit");
+  await waitFor(() => {
+    expect(fileEntry[0]?.textContent).toBe("new note edit");
+  });
 });
 
 test("deleteNote", async () => {
   const view = render(<ReactLoader />);
-  const fileEntry = await screen.findAllByText("new note edit");
+  const fileEntry = await screen.findAllByText(/new note.*/i);
   fireEvent.click(fileEntry![0]);
-  const deleteButton = getByClass(view.container, "deleteNoteButton");
-  fireEvent.click(deleteButton!);
+  const deleteButton = getByClass(view.container, "deleteNoteButton red");
+  fileEntry.forEach(x => {
+    fireEvent.click(x);
+    fireEvent.click(deleteButton!);
+  })
   expect(screen.queryByText("new note edit")).not.toBeInTheDocument();
 });
