@@ -1,37 +1,33 @@
-import { useSnackbar } from "notistack";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
-import EntryBar from "./components/EntryBar";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
 import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
-import createEnterElements from "./helpers/createEnterElements";
-import getNodeContentEditable from "./helpers/getNodeContentEditable";
-import {
-  getData,
-  getNoteContentByName,
-  resetData,
-  saveNewNote,
-  saveSpecificNote,
-} from "./helpers/io/storageFunctions";
-import { isRangeAtEnd } from "./helpers/setRangeAfter";
 import handleKeyPress from "./structures/keyPressHandler";
-// import initDB from "./io/dbFunctions";
+import EntryBar from "./components/EntryBar";
+
+declare global {
+  interface Window {
+    controls: any;
+    dbConnection: any;
+  }
+}
 
 function App() {
   let [content, setContent] = useState("");
-  let [entryBarToggle, setEntryBarToggle] = useState(false);
   let [currentNoteName, setCurrentNoteName] = useState("");
-  let [fetchedNotes, setFetchedNotes] = useState([]);
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  let [entryBarDefaultText, setEntryBarDefaultText] = useState("Enter new note name");
+  let [entryBarOpen, setEntryBarOpen] = useState(false);
+  let [entryBarAction, setEntryBarAction] = useState(() => {})
+
+  let entryBarProps = {setEntryBarOpen, setEntryBarAction, setEntryBarDefaultText}
   let cbox = document.querySelectorAll("input");
 
   cbox.forEach((cb) => {
     cb.addEventListener("click", () => {
-      console.log("change check");
       cb.checked
         ? cb.setAttribute("checked", "")
         : cb.removeAttribute("checked");
@@ -40,27 +36,20 @@ function App() {
   });
 
   useEffect(() => {
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
-    if (target === undefined) return;
+    let target = document.getElementsByClassName(
+      "editable"
+    )[0] as HTMLElement;
     if (currentNoteName === "") return;
-    if (getNoteContentByName(currentNoteName) !== null) {
-      setContent(getNoteContentByName(currentNoteName));
-    } else {
-      setCurrentNoteName("");
-    }
-    target.innerHTML = getNoteContentByName(currentNoteName);
+    if (target === undefined) return;
+    let syncContentFromNote = async () => {
+      let newContent = await window.dbConnection.getOneByName(currentNoteName);
+
+      setContent(newContent.noteHTML || "");
+      target.innerHTML = newContent.noteHTML;
+    };
+
+    syncContentFromNote();
   }, [currentNoteName]);
-
-  useEffect(() => {
-    if (currentNoteName) {
-      // handleCounter(target, setCharAmount, setWordAmount);
-      saveSpecificNote(currentNoteName, content);
-    }
-  }, [content, currentNoteName]);
-
-  useEffect(() => {
-    if (!fetchedNotes.length) setCurrentNoteName("");
-  }, [fetchedNotes]);
 
   return (
     <>
@@ -69,79 +58,59 @@ function App() {
         className="App"
         onKeyDown={(e) => {
           if (e.key === "Home") {
-            resetData();
+            window.dbConnection.resetData();
           }
         }}
       >
+        {entryBarOpen && <EntryBar
+          defaultText={entryBarDefaultText}
+          setEntryBarToggle={setEntryBarOpen}
+          fireAction={entryBarAction}
+        /> 
+}
         <main>
-          {entryBarToggle && (
-            <EntryBar
-              setEntryBarToggle={setEntryBarToggle}
-              defaultText="Enter new note name..."
-              fireAction={(text: string) => {
-                if (fetchedNotes.findIndex((e) => e.name === text) !== -1) {
-                  enqueueSnackbar("Note name already exists");
-                  return;
-                }
-                saveNewNote(text);
-                setCurrentNoteName(text);
-                setEntryBarToggle(false);
-                setFetchedNotes(getData().notes);
-                document.getElementsByClassName("editable")[0].focus();
-              }}
-            />
-          )}
           <LeftMenu
-            setEntrybarToggle={setEntryBarToggle}
             setCurrentNoteName={setCurrentNoteName}
             currentNoteName={currentNoteName}
-            fetchedNotes={fetchedNotes}
-            setFetchedNotes={setFetchedNotes}
             setBottomBarText={setBottomBarText}
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
+            entryBarProps={entryBarProps}
           />
-            <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
-            <>
-              <div
-                contentEditable={currentNoteName ? "true" : "false"}
-                suppressContentEditableWarning={true}
-                onClick={(e) => {
-                  if (!currentNoteName) return;
-                  setContent(
-                    document.getElementsByClassName("editable")[0].innerHTML
-                  );
-                  saveSpecificNote(currentNoteName, content);
-                }}
-                onKeyUp={(e) => {
-                  setContent(handleKeyPress(e, entryBarToggle) || "");
-                  saveSpecificNote(currentNoteName, content);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    if (
-                      getNodeContentEditable()?.parentElement?.className !==
-                        "App" &&
-                      isRangeAtEnd()
-                    ) {
-                      createEnterElements(e);
-                    }
-                  }
-                }}
-                className="editable"
-              >
-                <div>
-                  <br></br>
-                </div>
+          <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
+          <>
+            <div
+              tabIndex={2}
+              contentEditable={currentNoteName ? "true" : "false"}
+              suppressContentEditableWarning={true}
+              onClick={(e) => {
+                if (!currentNoteName) return;
+                setContent(
+                  document.getElementsByClassName("editable")[0].innerHTML
+                );
+              }}
+              onKeyUp={(e) => {
+                setContent(handleKeyPress(e) || "");
+                window.dbConnection.saveOne(currentNoteName, content);
+              }}
+              onKeyDown={async (e) => {
+                if (e.key === "Insert") {
+                  window.dbConnection.clearDb();
+                }
+              }}
+              className="editable"
+            >
+              <div>
+                <br></br>
               </div>
-            </>
-         
+            </div>
+          </>
         </main>
         <div className="bottomBar">
           <p className="bottomBarInfo">{bottomBarText}</p>
           <WordCounter content={content} />
         </div>
-        <div className="devBuildNotifier">Development build</div>
+        <div className="devBuildNotifier">Alpha build</div>
       </div>
     </>
   );

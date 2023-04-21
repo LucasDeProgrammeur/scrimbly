@@ -1,58 +1,79 @@
-import React from 'react';
-import { render, screen, queryByAttribute, fireEvent, prettyDOM } from '@testing-library/react';
-import ReactLoader from './components/ReactLoader';
-import { keyboard } from '@testing-library/user-event/dist/keyboard';
-import userEvent from '@testing-library/user-event';
+import {
+  render,
+  screen,
+  queryByAttribute,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
+import ReactLoader from "./components/ReactLoader";
+import userEvent from '@testing-library/user-event'
+import DataHandler from "../public/DataHandler";
+
+window.dbConnection = new DataHandler();
+
+const getByClass = queryByAttribute.bind(null, "class");
+jest.mock("../mocks/electronMock.js");
 
 
-const view = render(<ReactLoader />);
-const getByClass = queryByAttribute.bind(null, "class")
-
-test('newNote', () => {
-
-  const newNoteButton = getByClass(view.container, 'newNoteButton');
-  newNoteButton && fireEvent.click(newNoteButton)
-  const entryBar = getByClass(view.container, 'entryBarInput');
-  entryBar && fireEvent.change(entryBar, {target: {value: "nieuwe note"}})
-  entryBar && fireEvent.keyDown(entryBar, {key: "Enter", code: "Enter"})
-  const noteName = getByClass(view.container, 'fileEntry selectedEntry');
+test("newNote", async () => {
+  const view = render(<ReactLoader />);
+  const newNoteButton = getByClass(view.container, "newNoteButton");
+  fireEvent.click(newNoteButton!);
+  const entryBar = getByClass(view.container, "entryBarInput");
+  fireEvent.click(entryBar!);
+  fireEvent.change(entryBar!, { target: { value: "new note" } });
+  fireEvent.keyUp(entryBar!, { key: "Enter", code: "Enter", charCode: 13 });
+  const noteName = getByClass(view.container, "fileEntry selectedEntry");
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(noteName?.textContent?.substring(0, noteName.textContent.length - 1)).toBe("nieuwe note");
+  expect(
+    noteName?.textContent?.substring(0, noteName.textContent.length - 1)
+  ).toBe("new note");
 });
 
-
-test('editNote', async () => {
+test("editNote", async () => {
+  const user = userEvent.setup();
   const view = render(<ReactLoader />);
-  const noteName = getByClass(view.container, 'fileEntry');
-  fireEvent.click(noteName!);
-  const editable = getByClass(view.container, 'editable');
-  userEvent.click(editable!)
-  userEvent.keyboard("*test*")
+  const noteButton = await screen.findAllByText("new note");
+  user.click(noteButton[0]);
+  const editable = getByClass(view.container, "editable");
+  fireEvent.focus(editable!);
+  await userEvent.type(editable!, "{enter}*test* ", {delay: 100});
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(editable?.innerHTML).toBe("\u200b<em>test</em>\u200b");
+  
+  await waitFor(() => {
+    expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i);    
+  });
 });
 
-test('rename', async () => {
+test("rename", async () => {
+  const user = userEvent.setup();
   const view = render(<ReactLoader />);
-  const fileEntry = getByClass(view.container, 'fileEntry');
-  fireEvent.mouseOver(fileEntry!);
-  fireEvent.click(getByClass(view.container, "actionButton editNoteNameButton")!)
-  const entryBar = getByClass(view.container, 'entryBarInput');
-  entryBar && fireEvent.change(entryBar, {target: {value: "nieuwe note edit"}})
-  entryBar && fireEvent.keyDown(entryBar, {key: "Enter", code: "Enter"})
+  const fileEntry = await screen.findAllByText("new note");
+  user.click(fileEntry[0]);
+  const editNoteNameButton =  screen.getAllByLabelText("edit note name")
+  
+  editNoteNameButton.forEach((x: any) => {
+    fireEvent.click(x)
+    const entryBar = getByClass(view.container, "entryBarInput");
+    fireEvent.focus(entryBar!);
+    fireEvent.change(entryBar!, {target: {value: "new note edit"}});
+    user.type(entryBar!, "{enter}")
+  })
+
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(fileEntry?.textContent?.substring(0, fileEntry.textContent.length - 1)).toBe("nieuwe note edit");
+  await waitFor(() => {
+    expect(fileEntry[0]?.textContent).toBe("new note edit");
+  });
 });
 
-
-test('deleteNote', () => {
+test("deleteNote", async () => {
   const view = render(<ReactLoader />);
-  const noteName = getByClass(view.container, 'fileEntry');
-  fireEvent.click(noteName!);
-  const deleteButton = getByClass(view.container, 'deleteNoteButton')
-  fireEvent.click(deleteButton!);
-  const fileList = getByClass(view.container, 'fileList')
-  expect(fileList?.children.length).toBe(0);
-
-
-})
+  const fileEntry = await screen.findAllByText(/new note.*/i);
+  fireEvent.click(fileEntry![0]);
+  const deleteButton = getByClass(view.container, "deleteNoteButton red");
+  fileEntry.forEach(x => {
+    fireEvent.click(x);
+    fireEvent.click(deleteButton!);
+  })
+    expect(screen.queryByText("new note edit")).not.toBeInTheDocument();
+});

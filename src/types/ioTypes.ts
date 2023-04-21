@@ -1,10 +1,10 @@
 interface noteData {
-  notes: Array<{name: string; content: string;}>;
+  notes: Array<{name: string; noteHTML: string;}>;
 }
 
 type noteList = Array<note>
 
-interface note  {name: string; content: string;};
+interface note  {noteName: string; noteHTML: string;};
 
 
 export type { noteList, noteData, note};

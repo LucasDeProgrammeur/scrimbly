@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { getData, removeNote } from "../helpers/io/storageFunctions";
 import { useSnackbar } from "notistack";
-import { noteList, note } from "../types/ioTypes";
 import FileEntry from "./FileEntry";
+import EntryBar from "./EntryBar";
 
 interface LeftMenuProps {
-  setEntrybarToggle: any;
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
-  fetchedNotes: noteList;
-  setFetchedNotes: any;
   setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
+  entryBarProps: any;
 }
 
+const getNoteNames = async (setter: (arg0: any) => void) => {
+  setter(await window.dbConnection.getAllNoteNames());
+};
+
 const LeftMenu = ({
-  setEntrybarToggle,
   setCurrentNoteName,
   currentNoteName,
-  fetchedNotes,
-  setFetchedNotes,
   setBottomBarText,
   setHelpOpen,
-  helpOpen
+  helpOpen,
+  entryBarProps
 }: LeftMenuProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
+  let [noteNames, setNoteNames] = useState<string[]>([]);
+
   useEffect(() => {
-    setFetchedNotes(getData().notes);
-  }, [setFetchedNotes]);
+    getNoteNames(setNoteNames);
+  }, []);
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
     const leftSide = document.getElementsByClassName("leftMenu")[0];
-    const rightSide = document.getElementsByClassName("editable")[0] as HTMLElement;
-    console.log(rightSide);
+    const rightSide = document.getElementsByClassName(
+      "editable"
+    )[0] as HTMLElement;
     const container = document.getElementsByClassName("App")[0] as HTMLElement;
     var moveX =
       leftSide.getBoundingClientRect().width +
@@ -49,13 +51,12 @@ const LeftMenu = ({
 
     container.addEventListener("mousemove", function (e) {
       moveX = e.x;
-      let newWidth =  (moveX - resize.getBoundingClientRect().width / 2) + 10 + "px";
+      let newWidth =
+        moveX - resize.getBoundingClientRect().width / 2 + 10 + "px";
       if (drag) {
         rightSide.style.width = "calc(100% - " + newWidth + ")";
-        leftSide.style.width = newWidth
-       
+        leftSide.style.width = newWidth;
       }
-
     });
 
     container.addEventListener("mouseup", function (e) {
@@ -65,23 +66,48 @@ const LeftMenu = ({
 
   return (
     <>
-      <div className={!helpOpen ? "leftMenu" : "leftMenu disabled"} draggable>
+      <div
+        tabIndex={1}
+        className={!helpOpen ? "leftMenu" : "leftMenu disabled"}
+        draggable
+      >
         <div className="topBar" onMouseLeave={() => setBottomBarText("")}>
           <button
             className="newNoteButton"
             onMouseEnter={() => setBottomBarText("New Note")}
             onMouseLeave={() => setBottomBarText("")}
-            onClick={() => setEntrybarToggle(true)}
+            onClick={() => {  
+              entryBarProps.setEntryBarOpen(true);
+              entryBarProps.setEntryBarDefaultText("Enter a new note name...");
+              entryBarProps.setEntryBarAction(() => (newNoteName: string) => {
+                if (
+                  noteNames.length &&
+                  noteNames.findIndex((e) => e === newNoteName) !== -1
+                ) {
+                  enqueueSnackbar("Note name already exists");
+                  return;
+                }
+                window.dbConnection.insert(newNoteName, "");
+                setNoteNames([...noteNames, newNoteName]);
+                setCurrentNoteName(newNoteName);
+                entryBarProps.setEntryBarOpen(false);
+    
+                document.getElementsByClassName("editable")[0].focus();
+              })
+            }}
+            aria-label="New note"
           >
             &#xE710;
           </button>
           <button
-            className="deleteNoteButton"
+            className="deleteNoteButton red"
             onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
-              let newValue = removeNote(currentNoteName);
-              setFetchedNotes(newValue.notes);
+              window.dbConnection.deleteOneByName(currentNoteName);
+              setNoteNames(noteNames.filter((x) => x !== currentNoteName));
+              setCurrentNoteName("");
             }}
+            aria-label="Delete note"
           >
             &#xE74D;
           </button>
@@ -90,13 +116,14 @@ const LeftMenu = ({
             onClick={() => {
               setHelpOpen(!helpOpen);
             }}
+            aria-label="Help"
           >
             &#xE897;
           </button>
           <button
             onMouseEnter={() => setBottomBarText("Export data")}
             onClick={() => {
-              controls.export().then(() => {
+              window.controls.export().then(() => {
                 enqueueSnackbar("Data exported");
               });
             }}
@@ -105,11 +132,15 @@ const LeftMenu = ({
           </button>
           <button
             onMouseEnter={() => setBottomBarText("Import data")}
-            onClick={() => {
-              controls.import().then(() => {
-                enqueueSnackbar("Data imported");
-                setFetchedNotes(getData().notes);
-              });
+            onClick={async () => {
+              let data = await window.controls.import();
+              if (!data) {
+                enqueueSnackbar("Scrimbly was unable to import these notes");
+                return;
+              }
+              setNoteNames(data);
+
+              enqueueSnackbar("Data imported");
             }}
           >
             &#xE8E5;
@@ -124,26 +155,22 @@ const LeftMenu = ({
           }}
         />
         <div className="fileList">
-          {fetchedNotes &&
-            fetchedNotes
-              .filter(
-                (e) =>
-                  e.name
-                    .toLowerCase()
-                    .includes(noteSearchQuery.toLowerCase()) ||
-                  e.name === currentNoteName
-              )
-              .map((e: note, i: Number) => {
-                return (
-                  <FileEntry
-                    setFetchedNotes={setFetchedNotes}
-                    keyNumber={i}
-                    currentNoteName={currentNoteName}
-                    setCurrentNoteName={setCurrentNoteName}
-                    name={e.name}
-                  />
-                );
-              })}
+          {noteNames.map((e, i) =>
+            e.toLowerCase().includes(noteSearchQuery.toLocaleLowerCase()) ||
+            e === currentNoteName ? (
+              <FileEntry
+                setNoteNames={setNoteNames}
+                noteNames={noteNames}
+                key={i as React.Key}
+                currentNoteName={currentNoteName}
+                setCurrentNoteName={setCurrentNoteName}
+                name={e}
+                entryBarProps={entryBarProps}
+              />
+            ) : (
+              <></>
+            )
+          )}
         </div>
       </div>
       <div className="resizerSpace"></div>

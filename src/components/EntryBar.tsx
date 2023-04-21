@@ -1,4 +1,4 @@
-import { getData } from "../helpers/io/storageFunctions";
+import { useState } from "react";
 
 interface EntryBarProps {
   defaultText: string;
@@ -10,16 +10,19 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   fireAction,
   setEntryBarToggle
 }: EntryBarProps) => {
+  const [inputValue, setInputValue] = useState("");
   return (
     <div className="entryBar" id="entryBar">
       <input
       className="entryBarInput"
-        onKeyDown={(e) => {
+        onKeyUp={(e) => {
+          
           const target = e.target as HTMLInputElement;
           if (e.key === "Enter") {
             e.preventDefault();
             fireAction(target.value);
             setEntryBarToggle(false)
+            
           }
           if (e.key === "Escape") {
             setEntryBarToggle(false);
@@ -28,7 +31,9 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
         autoFocus
         placeholder={defaultText}
         type="text"
-      ></input>
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
+      />
     </div>
   );
 };
