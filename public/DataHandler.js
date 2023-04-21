@@ -86,6 +86,9 @@ class DataHandler {
       this.db.exec(queryString);
     }
     
+    closeDb () {
+      this.db.close();
+    }
     
 }
 

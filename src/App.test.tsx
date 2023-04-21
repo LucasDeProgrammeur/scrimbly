@@ -11,12 +11,12 @@ import DataHandler from "../public/DataHandler";
 
 window.dbConnection = new DataHandler();
 
-const view = render(<ReactLoader />);
 const getByClass = queryByAttribute.bind(null, "class");
 jest.mock("../mocks/electronMock.js");
 
 
 test("newNote", async () => {
+  const view = render(<ReactLoader />);
   const newNoteButton = getByClass(view.container, "newNoteButton");
   fireEvent.click(newNoteButton!);
   const entryBar = getByClass(view.container, "entryBarInput");
@@ -43,7 +43,6 @@ test("editNote", async () => {
   await waitFor(() => {
     expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i);    
   });
-
 });
 
 test("rename", async () => {
@@ -76,5 +75,5 @@ test("deleteNote", async () => {
     fireEvent.click(x);
     fireEvent.click(deleteButton!);
   })
-  expect(screen.queryByText("new note edit")).not.toBeInTheDocument();
+    expect(screen.queryByText("new note edit")).not.toBeInTheDocument();
 });

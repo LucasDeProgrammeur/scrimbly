@@ -40,7 +40,7 @@
     "electron": "wait-on tcp:3000 && electron .",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "dist": "electron-builder",
-    "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache"
+    "test:debug": "react-scripts --inspect-brk test --forceExit"
   },
   "eslintConfig": {
     "extends": [

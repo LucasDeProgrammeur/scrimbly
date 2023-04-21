@@ -36,14 +36,14 @@ function App() {
   });
 
   useEffect(() => {
+    let target = document.getElementsByClassName(
+      "editable"
+    )[0] as HTMLElement;
     if (currentNoteName === "") return;
+    if (target === undefined) return;
     let syncContentFromNote = async () => {
       let newContent = await window.dbConnection.getOneByName(currentNoteName);
-      let target = document.getElementsByClassName(
-        "editable"
-      )[0] as HTMLElement;
-      if (newContent === undefined) return;
-      console.log(newContent);
+
       setContent(newContent.noteHTML || "");
       target.innerHTML = newContent.noteHTML;
     };
