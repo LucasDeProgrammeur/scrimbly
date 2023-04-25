@@ -1,5 +1,5 @@
 # Scrimbly
-https://img.shields.io/appveyor/build/lucasdeprogrammeur/scrimbly
+https://img.shields.io/github/languages/top/lucasdeprogrammeur/scrimbly
 Markdown note editing app. For now it only supports headings. Made just for fun.
 
 ## Some features (subject to change)
