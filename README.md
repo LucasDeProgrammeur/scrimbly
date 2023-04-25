@@ -1,6 +1,7 @@
 # Scrimbly
 ![GitHub top language](https://img.shields.io/github/languages/top/lucasdeprogrammeur/scrimbly)
-Markdown note editing app. For now it only supports headings. Made just for fun.
+![GitHub all releases](https://img.shields.io/github/downloads/lucasdeprogrammeur/scrimbly/total)
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/lucasdeprogrammeur/scrimbly/node.js.yml)
 
 ## Some features (subject to change)
 
