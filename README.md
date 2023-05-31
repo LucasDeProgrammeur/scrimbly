@@ -25,3 +25,8 @@ You can create checkboxes within your notes and add text after it
 ### Create bold and italic text
 ![Alt Text](https://s4.gifyu.com/images/text-emphasis.gif)
 
+## Running and building from source
+You will need `git` and `nodejs` to perform these steps
+First, clone this repository using `git clone https://github.com/LucasDeProgrammeur/scrimbly`
+Then, cd into the newly created directory, and run `npm install`
+Afterwards, run `npm run dev` to run the program while in development, or `npm run build` to build the project.
