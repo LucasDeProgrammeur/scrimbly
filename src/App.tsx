@@ -19,11 +19,18 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
-  let [entryBarDefaultText, setEntryBarDefaultText] = useState("Enter new note name");
+  let [shouldLockApp, setShouldLockApp] = useState(false);
+  let [entryBarDefaultText, setEntryBarDefaultText] = useState(
+    "Enter new note name"
+  );
   let [entryBarOpen, setEntryBarOpen] = useState(false);
-  let [entryBarAction, setEntryBarAction] = useState(() => {})
+  let [entryBarAction, setEntryBarAction] = useState(() => {});
 
-  let entryBarProps = {setEntryBarOpen, setEntryBarAction, setEntryBarDefaultText}
+  let entryBarProps = {
+    setEntryBarOpen,
+    setEntryBarAction,
+    setEntryBarDefaultText,
+  };
   let cbox = document.querySelectorAll("input");
 
   cbox.forEach((cb) => {
@@ -36,9 +43,7 @@ function App() {
   });
 
   useEffect(() => {
-    let target = document.getElementsByClassName(
-      "editable"
-    )[0] as HTMLElement;
+    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
     if (currentNoteName === "") return;
     if (target === undefined) return;
     let syncContentFromNote = async () => {
@@ -51,6 +56,17 @@ function App() {
     syncContentFromNote();
   }, [currentNoteName]);
 
+  useEffect(() => {
+    const checkIsSingleInstance = async () => {
+      let isSingleInstance = await window.controls.isSingleInstance();
+      if (!isSingleInstance) {
+        setShouldLockApp(true);
+      }
+    };
+
+    checkIsSingleInstance();
+  }, []);
+
   return (
     <>
       <WindowBar />
@@ -62,12 +78,18 @@ function App() {
           }
         }}
       >
-        {entryBarOpen && <EntryBar
-          defaultText={entryBarDefaultText}
-          setEntryBarToggle={setEntryBarOpen}
-          fireAction={entryBarAction}
-        /> 
-}
+        <dialog open={shouldLockApp}>
+          Opening two instances of Scrimbly at the same time could result in
+          notes being out of sync.
+          <button onClick={() => setShouldLockApp(false)}>OK</button>
+        </dialog>
+        {entryBarOpen && (
+          <EntryBar
+            defaultText={entryBarDefaultText}
+            setEntryBarToggle={setEntryBarOpen}
+            fireAction={entryBarAction}
+          />
+        )}
         <main>
           <LeftMenu
             setCurrentNoteName={setCurrentNoteName}

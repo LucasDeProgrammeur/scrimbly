@@ -6,15 +6,13 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { SnackbarProvider } from "notistack";
 import ReactLoader from "./components/ReactLoader";
+import "./Dialog.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
-
-root.render(
-  <ReactLoader />
-);
+root.render(<ReactLoader />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
