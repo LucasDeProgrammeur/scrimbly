@@ -3,7 +3,6 @@
   src: url(./fonts//SegMDL2.ttf);
 }
 
-
 .disabled {
   display: none;
 }
@@ -13,7 +12,7 @@
   pointer-events: none;
 }
 
-*::-webkit-scrollbar{
+*::-webkit-scrollbar {
   width: 9px;
   background-color: transparent;
   margin: 10px;
@@ -25,7 +24,8 @@
   border-radius: 17px;
 }
 
-img, .imageFrame {
+img,
+.imageFrame {
   filter: drop-shadow(-2px 0px 10px rgb(15 15 20/0.3));
   /* box-shadow: -2px 0px 10px rgb(15 15 20/0.3);; */
 }
@@ -44,6 +44,15 @@ img, .imageFrame {
 main {
   height: calc(100vh - 57px);
   display: flex;
+}
+
+code,
+hljs {
+  display: block;
+  background-color: black !important;
+  padding: 20px !important;
+  border-radius: 10px !important;
+  width: fit-content;
 }
 
 .editable {
@@ -83,7 +92,6 @@ main {
   width: calc(100vw -100px);
   height: calc(100% - 120px);
   overflow-y: scroll;
-
 }
 
 .shadowElement {
@@ -221,7 +229,6 @@ main {
 .topBar .red:hover {
   background-color: rgb(88, 7, 7);
   border-color: rgb(51, 4, 4);
-
 }
 
 .topBar button:hover,

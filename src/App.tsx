@@ -6,6 +6,9 @@ import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
 import handleKeyPress from "./structures/keyPressHandler";
 import EntryBar from "./components/EntryBar";
+import EditableManipulator from "./helpers/EditableManipulator";
+import checkForInlineFormatting from "./helpers/checkForFormatting";
+import checkForLineFormatting from "./helpers/checkForLineFormatting";
 
 declare global {
   interface Window {
@@ -112,13 +115,24 @@ function App() {
                 );
               }}
               onKeyUp={(e) => {
-                setContent(handleKeyPress(e) || "");
+                const target = e.target as HTMLInputElement;
+                // EditableManipulator.SyntaxHighlightCodeBlocks([
+                //   ...target.children,
+                // ]);
+                EditableManipulator.createDefaultElements(e);
+                checkForLineFormatting(target);
+                checkForInlineFormatting(target);
+
                 window.dbConnection.saveOne(currentNoteName, content);
               }}
               onKeyDown={async (e) => {
+                const target = e.target as HTMLInputElement;
+
                 if (e.key === "Insert") {
                   window.dbConnection.clearDb();
                 }
+                EditableManipulator.preventEditableBehavior(e);
+                setContent(EditableManipulator.handleKeyPress(e) || "");
               }}
               className="editable"
             >
