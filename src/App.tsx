@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import "./App.css";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
 import WindowBar from "./components/WindowBar";
 import WordCounter from "./components/WordCounter";
-import handleKeyPress from "./structures/keyPressHandler";
 import EntryBar from "./components/EntryBar";
 import EditableManipulator from "./helpers/EditableManipulator";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
@@ -23,11 +22,12 @@ function App() {
   let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   let [shouldLockApp, setShouldLockApp] = useState(false);
+  const [selectionRange, setSelectionRange] = useState({ range: null }) as any;
   let [entryBarDefaultText, setEntryBarDefaultText] = useState(
     "Enter new note name"
   );
   let [entryBarOpen, setEntryBarOpen] = useState(false);
-  let [entryBarAction, setEntryBarAction] = useState(() => {});
+  let [entryBarAction, setEntryBarAction] = useState(() => { });
 
   let entryBarProps = {
     setEntryBarOpen,
@@ -44,6 +44,18 @@ function App() {
       setContent(document.getElementsByClassName("editable")[0].innerHTML);
     });
   });
+
+  useLayoutEffect(() => {
+    const selection = document.getSelection()!
+    if (selectionRange !== undefined) {
+      selection.removeAllRanges()
+      // Check if selectionrange has a property a range is known to have
+      if (selectionRange.startContainer) {
+        selection.addRange(selectionRange)
+      }
+    }
+  })
+
 
   useEffect(() => {
     let target = document.getElementsByClassName("editable")[0] as HTMLElement;
@@ -114,25 +126,26 @@ function App() {
                   document.getElementsByClassName("editable")[0].innerHTML
                 );
               }}
-              onKeyUp={(e) => {
+              onInput={(e) => {
+                debugger;
                 const target = e.target as HTMLInputElement;
-                // EditableManipulator.SyntaxHighlightCodeBlocks([
-                //   ...target.children,
-                // ]);
                 EditableManipulator.createDefaultElements(e);
+                EditableManipulator.SyntaxHighlightCodeBlocks()
                 checkForLineFormatting(target);
                 checkForInlineFormatting(target);
-
+                setSelectionRange(document.getSelection()!.getRangeAt(0).cloneRange())
+                setContent(target.innerHTML)
                 window.dbConnection.saveOne(currentNoteName, content);
               }}
               onKeyDown={async (e) => {
                 const target = e.target as HTMLInputElement;
-
+                
+                EditableManipulator.preventEditableBehavior(e);
                 if (e.key === "Insert") {
                   window.dbConnection.clearDb();
                 }
-                EditableManipulator.preventEditableBehavior(e);
-                setContent(EditableManipulator.handleKeyPress(e) || "");
+
+                // setContent(EditableManipulator.handleKeyPress(e) || "");
               }}
               className="editable"
             >

@@ -7,6 +7,10 @@
   display: none;
 }
 
+h1, h2, h3 {
+  min-height: 40px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -48,11 +52,17 @@ main {
 
 code,
 hljs {
-  display: block;
+  position: relative;
+  width: 30%;
+  display: inline-block;
   background-color: black !important;
   padding: 20px !important;
   border-radius: 10px !important;
-  width: fit-content;
+}
+
+.hljs {
+  left: calc(-30% - 40px);
+  opacity: 0.8;
 }
 
 .editable {

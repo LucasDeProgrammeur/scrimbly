@@ -1,9 +1,6 @@
 import ReactDOM from "react-dom/client";
 import EditableManipulator from "./EditableManipulator";
 
-const codeHighlight = () => {
-  EditableManipulator.SyntaxHighlightCodeBlocks();
-};
 
 export default function checkForLineFormatting(editable: Element) {
   let elementTypes = [
@@ -16,8 +13,16 @@ export default function checkForLineFormatting(editable: Element) {
       element: "code",
       properties: [
         {
-          attrName: "onblur",
-          val: EditableManipulator.SyntaxHighlightCodeBlocks,
+          attrName: "oninput",
+          val: () => console.log,
+        },
+        {
+          attrName: "contenteditable",
+          val: true,
+        },
+        {
+          attrName: "tabIndex",
+          val: "4",
         },
       ],
     },
@@ -60,19 +65,20 @@ export default function checkForLineFormatting(editable: Element) {
         let newElement = document.createElement(typesE.element);
         //use the text within element, but remove the syntax
         newElement.innerText = e.innerText.replaceAll(typesE.syntax, "");
-        if (newElement.innerText === "") newElement.innerHTML = "&#8203;";
         e.textContent = "";
         e.appendChild(newElement);
 
         if (typesE.properties) {
           typesE.properties.forEach((property) => {
-            console.log(typeof property.val);
             if (typeof property.val === "string") {
               newElement.setAttribute(property.attrName, property.val);
             }
+            if (typeof property.val === "boolean") {
+              newElement.setAttribute(property.attrName, 'true');
+            }
             if (typeof property.val === "function") {
-              newElement.addEventListener("click", (e) =>
-                EditableManipulator.SyntaxHighlightCodeBlocksNew(e)
+              newElement.addEventListener("keyup", (e) =>
+                console.log("event trigger")
               );
             }
           });

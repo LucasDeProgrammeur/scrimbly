@@ -87,12 +87,10 @@ const LeftMenu = ({
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
-                window.dbConnection.insert(newNoteName, "");
+                window.dbConnection.insert(newNoteName, "<div><br></div>");
                 setNoteNames([...noteNames, newNoteName]);
                 setCurrentNoteName(newNoteName);
                 entryBarProps.setEntryBarOpen(false);
-    
-                document.getElementsByClassName("editable")[0].focus();
               })
             }}
             aria-label="New note"

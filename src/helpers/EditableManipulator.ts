@@ -1,9 +1,7 @@
 import hljs from "highlight.js";
-import checkForInlineFormatting from "./checkForFormatting";
-import checkForLineFormatting from "./checkForLineFormatting";
 
 class EditableManipulator {
-  static createDefaultElements(e: React.KeyboardEvent<Element>) {
+  static createDefaultElements(e: React.FormEvent<HTMLDivElement>) {
     let target = e.target as HTMLElement;
     let node = this.getNodeContentEditable();
     let newEl = document.createElement("div");
@@ -11,15 +9,13 @@ class EditableManipulator {
     let newBreakLine = document.createElement("br");
     newEl.appendChild(newBreakLine);
 
-    switch (e.key) {
-      case "Backspace":
-        console.log(target.childNodes.length);
-        if (target.childNodes.length <= 0) {
-          target.appendChild(newEl);
-        }
-        break;
+    if (target.childNodes.length <= 0) {
+      target.appendChild(newEl);
+    
     }
   }
+
+  
 
   static preventEditableBehavior(e: React.KeyboardEvent<Element>) {
     let target = e.target as HTMLElement;
@@ -41,17 +37,20 @@ class EditableManipulator {
           let selection = window.getSelection();
           let range = selection!.getRangeAt(0);
 
-          let codeEnter = document.createElement("br");
+          let codeEnter = document.createTextNode("\n\n");
           console.log(this.getNodeContentEditable());
           console.log(document.getSelection());
-          // node.insertBefore(
-          //   codeEnter,
-          //   document.getSelection()?.anchorNode!.nextSibling!
-          // );
+          node.insertBefore(
+            codeEnter,
+            document.getSelection()?.anchorNode!.nextSibling!
+          );
+
+          this.getNodeContentEditable()!.textContent += "\n\n";
+
           range.insertNode(codeEnter);
           range.setStartAfter(codeEnter);
           range.setEndAfter(codeEnter);
-          this.setRangeOn(codeEnter, 0);
+          //this.setRangeOn(codeEnter, 0);
 
           selection!.removeAllRanges();
           selection!.addRange(range);
@@ -141,34 +140,70 @@ class EditableManipulator {
     });
   }
 
-  static SyntaxHighlightCodeBlocks(children: Array<Element>) {
-    const editableChildren = children
-      .map((x) => {
-        return [...x.children].filter((x) => x.nodeName === "CODE");
-      })
-      .filter((x) => x !== undefined);
+  static SyntaxHighlightCodeBlocks() {
+    const target = this.getNodeContentEditable() as HTMLElement;
+    const editable = document.getElementsByClassName("editable")[0]
+    if (target?.nodeName !== "CODE") return;
+    
 
-    const editableChildrenFlat = ([] as Element[]).concat(...editableChildren);
 
-    const selection = window.getSelection();
-    let range = null;
-    try {
-      range = selection!.getRangeAt(0);
-    } catch {
-      return;
-    }
-    const focusNode = selection?.focusNode;
-    const focusOffset = selection?.focusOffset;
-    const startOffset = range.startOffset;
-    const endOffset = range.endOffset;
-    const startContainer = range.startContainer;
-    const endContainer = range.endContainer;
+    console.log("TRIGGERED")
+    console.dir(target)
 
-    editableChildrenFlat.forEach((x) => {
-      const innerHTMLCodeblock = x.innerHTML;
-      console.log(innerHTMLCodeblock);
-      hljs.highlightElement(x as HTMLElement);
-    });
+      let codeOverlay;
+      if (!target.nextElementSibling?.className.includes("highlightOverlay")) {
+        console.dir(target.children)
+        codeOverlay = document.createElement("code")
+        codeOverlay.classList.add("highlightOverlay")
+        codeOverlay.setAttribute("editable", "false")
+        codeOverlay.setAttribute("tabindex", "-1")
+        target.insertAdjacentElement('afterend', codeOverlay)
+      } else {
+        codeOverlay = target.nextElementSibling
+      }
+      codeOverlay.textContent = ""
+      codeOverlay.textContent = target.textContent;
+
+      hljs.highlightElement(codeOverlay as HTMLElement);
+
+    // const editableChildren = children
+    //   .map((x) => {
+    //     return [...x.children].filter((x) => x.nodeName === "CODE");
+    //   })
+    //   .filter((x) => x !== undefined);
+
+    // const editableChildrenFlat = ([] as Element[]).concat(...editableChildren);
+
+    // const selection = window.getSelection();
+    // let range = null;
+    // try {
+    //   range = selection!.getRangeAt(0);
+    // } catch {
+    //   return;
+    // }
+    // const focusNode = selection?.focusNode;
+    // const focusOffset = selection?.focusOffset;
+    // const startOffset = range.startOffset;
+    // const endOffset = range.endOffset;
+    // const startContainer = range.startContainer;
+    // const endContainer = range.endContainer;
+
+    // editableChildrenFlat.forEach((x) => {
+    //   const innerHTMLCodeblock = x.innerHTML;
+    //   let codeOverlay;
+    //   if (![...x.children].filter(x => x.className != "highlightOverlay").length) {
+    //     codeOverlay = document.createElement("code")
+    //     codeOverlay.classList.add("highlightOverlay")
+    //     x.appendChild(codeOverlay)
+    //   } else {
+    //     codeOverlay = [...x.children].filter(x => x.className != "highlightOverlay")[0]
+    //   }
+      
+    //   codeOverlay.textContent = x.textContent;
+    
+      
+    //   hljs.highlightElement(codeOverlay as HTMLElement);
+    // });
   }
 
   static SyntaxHighlightCodeBlocksNew(e: Event) {
