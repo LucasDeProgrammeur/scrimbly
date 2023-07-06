@@ -127,7 +127,6 @@ function App() {
                 );
               }}
               onInput={(e) => {
-                debugger;
                 const target = e.target as HTMLInputElement;
                 EditableManipulator.createDefaultElements(e);
                 EditableManipulator.SyntaxHighlightCodeBlocks()
@@ -138,8 +137,6 @@ function App() {
                 window.dbConnection.saveOne(currentNoteName, content);
               }}
               onKeyDown={async (e) => {
-                const target = e.target as HTMLInputElement;
-                
                 EditableManipulator.preventEditableBehavior(e);
                 if (e.key === "Insert") {
                   window.dbConnection.clearDb();

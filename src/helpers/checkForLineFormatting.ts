@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom/client";
 import EditableManipulator from "./EditableManipulator";
 
 
@@ -83,7 +82,7 @@ export default function checkForLineFormatting(editable: Element) {
             }
           });
         }
-        EditableManipulator.setRangeAfter(newElement);
+        EditableManipulator.setRangeAfter(newElement, 1);
       }
     });
   });

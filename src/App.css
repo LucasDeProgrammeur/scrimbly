@@ -50,19 +50,26 @@ main {
   display: flex;
 }
 
+code {
+  pointer-events: auto;
+  z-index: 3;
+}
+
 code,
 hljs {
   position: relative;
-  width: 30%;
+  left: 0;
   display: inline-block;
   background-color: black !important;
   padding: 20px !important;
   border-radius: 10px !important;
+  white-space: pre;
 }
 
 .hljs {
-  left: calc(-30% - 40px);
+  transform: translateX(-100%);
   opacity: 0.8;
+  pointer-events: none;
 }
 
 .editable {

@@ -39,7 +39,7 @@ const checkForInlineFormatting = (editable: Element) => {
             "afterend",
             "&#8203;" + previousTextEnd
           );
-          EditableManipulator.setRangeOn(newElement);
+          EditableManipulator.setRangeAfter(newElement);
         }
       }
     );
