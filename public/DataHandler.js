@@ -5,7 +5,7 @@ class DataHandler {
     this.db = new sqlite3.Database('./scrimblydb.db')
   }
 
-  getAll() {
+   getAll() {
     this.db.run(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
@@ -21,13 +21,13 @@ class DataHandler {
     })
   }
 
-  updateName(newNoteName, oldNoteName) {
+   updateName(newNoteName, oldNoteName) {
     this.db.run(
       `UPDATE notes SET noteName = '${newNoteName}' WHERE noteName = '${oldNoteName}'`,
     )
   }
 
-  getAllNoteNames() {
+   getAllNoteNames() {
     this.db.run(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
@@ -43,11 +43,11 @@ class DataHandler {
     })
   }
 
-  clearDb() {
+   clearDb() {
     this.db.run('DELETE FROM notes')
   }
 
-  getOneByName(noteName) {
+     getOneByName(noteName) {
     this.db.run(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
@@ -60,14 +60,13 @@ class DataHandler {
           if (err) {
             reject(err)
           }
-
           resolve(data)
         },
       )
     })
   }
 
-  async noteExists(noteName) {
+   async noteExists(noteName) {
     try {
       let result = await this.getOneByName(noteName)
       if (result) {
@@ -78,7 +77,7 @@ class DataHandler {
     }
   }
 
-  saveOne(noteName, noteHTML) {
+   saveOne(noteName, noteHTML) {
     return new Promise((resolve, reject) => {
       this.db.exec(
         `UPDATE notes SET noteHTML = '${noteHTML}' WHERE noteName = '${noteName}'`,
@@ -92,11 +91,11 @@ class DataHandler {
     })
   }
 
-  deleteOneByName(noteName) {
+   deleteOneByName(noteName) {
     this.db.run(`DELETE FROM notes WHERE noteName = '${noteName}'`)
   }
 
-  async insert(noteName, noteHTML) {
+   async insert(noteName, noteHTML) {
     this.db.run(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},

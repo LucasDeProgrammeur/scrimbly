@@ -53,6 +53,7 @@ main {
 code {
   pointer-events: auto;
   z-index: 3;
+  min-height: 20px;
 }
 
 code,

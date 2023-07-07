@@ -58,14 +58,16 @@ function App() {
 
 
   useEffect(() => {
-    let target = document.getElementsByClassName("editable")[0] as HTMLElement;
+    const target = document.getElementsByClassName("editable")[0] as HTMLElement;
     if (currentNoteName === "") return;
     if (target === undefined) return;
     let syncContentFromNote = async () => {
       let newContent = await window.dbConnection.getOneByName(currentNoteName);
-
-      setContent(newContent.noteHTML || "");
-      target.innerHTML = newContent.noteHTML;
+      if (newContent) {
+        
+        setContent(newContent.noteHTML || "");
+        target.innerHTML = newContent.noteHTML;
+      }
     };
 
     syncContentFromNote();
@@ -73,7 +75,7 @@ function App() {
 
   useEffect(() => {
     const checkIsSingleInstance = async () => {
-      let isSingleInstance = await window.controls.isSingleInstance();
+      const isSingleInstance = await window.controls.isSingleInstance();
       if (!isSingleInstance) {
         setShouldLockApp(true);
       }
@@ -120,6 +122,16 @@ function App() {
               tabIndex={2}
               contentEditable={currentNoteName ? "true" : "false"}
               suppressContentEditableWarning={true}
+              onCopy={(e) => {
+                console.dir(e.clipboardData)
+                e.preventDefault(); 
+                const selectedText = window.getSelection()!.toString(); 
+                const range = document.createRange(); 
+                range.selectNode(document.body);
+                const copiedData = range.createContextualFragment(selectedText);
+                e.clipboardData.setData('text/plain', copiedData.textContent!); 
+                e.clipboardData.setData('text/html', ''); 
+              }}
               onClick={(e) => {
                 if (!currentNoteName) return;
                 setContent(
@@ -130,6 +142,7 @@ function App() {
                 const target = e.target as HTMLInputElement;
                 EditableManipulator.createDefaultElements(e);
                 EditableManipulator.SyntaxHighlightCodeBlocks()
+                EditableManipulator.removeOrphanHighlightedCodeblocks(e.target as HTMLElement)
                 checkForLineFormatting(target);
                 checkForInlineFormatting(target);
                 setSelectionRange(document.getSelection()!.getRangeAt(0).cloneRange())

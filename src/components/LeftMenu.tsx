@@ -79,7 +79,7 @@ const LeftMenu = ({
             onClick={() => {  
               entryBarProps.setEntryBarOpen(true);
               entryBarProps.setEntryBarDefaultText("Enter a new note name...");
-              entryBarProps.setEntryBarAction(() => (newNoteName: string) => {
+              entryBarProps.setEntryBarAction(() => async (newNoteName: string) => {
                 if (
                   noteNames.length &&
                   noteNames.findIndex((e) => e === newNoteName) !== -1
@@ -87,8 +87,8 @@ const LeftMenu = ({
                   enqueueSnackbar("Note name already exists");
                   return;
                 }
-                window.dbConnection.insert(newNoteName, "<div><br></div>");
                 setNoteNames([...noteNames, newNoteName]);
+                await window.dbConnection.insert(newNoteName, "<div><br></div>");
                 setCurrentNoteName(newNoteName);
                 entryBarProps.setEntryBarOpen(false);
               })

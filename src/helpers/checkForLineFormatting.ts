@@ -82,7 +82,7 @@ export default function checkForLineFormatting(editable: Element) {
             }
           });
         }
-        EditableManipulator.setRangeAfter(newElement, 1);
+        EditableManipulator.setRangeOn(newElement.parentElement!, [...newElement.parentElement?.childNodes!].indexOf(newElement) +1);
       }
     });
   });

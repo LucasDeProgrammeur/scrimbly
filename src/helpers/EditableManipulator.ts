@@ -138,7 +138,6 @@ class EditableManipulator {
 
   static SyntaxHighlightCodeBlocks() {
     const target = this.getNodeContentEditable() as HTMLElement;
-    const editable = document.getElementsByClassName("editable")[0]
     if (target?.nodeName !== "CODE") return;
 
 
@@ -148,7 +147,6 @@ class EditableManipulator {
 
     let codeOverlay;
     if (!target.nextElementSibling?.className.includes("highlightOverlay")) {
-      console.dir(target.children)
       codeOverlay = document.createElement("code")
       codeOverlay.classList.add("highlightOverlay")
       codeOverlay.setAttribute("contenteditable", "false")
@@ -156,7 +154,6 @@ class EditableManipulator {
 
 
       codeOverlay.addEventListener("keydown", (event) => {
-        console.log("test")
         event.preventDefault();
       });
 
@@ -184,8 +181,16 @@ class EditableManipulator {
     const newString = codeContent?.substring(0, offset) + textToInsert + codeContent?.substring(offset, codeContent.length)
     let node = document.getSelection()?.anchorNode as Node;
     node.textContent = newString
-    this.setRangeOn(node as HTMLElement, offset + 1)
+    this.setRangeOn(node as HTMLElement, offset + textToInsert.length)
     this.SyntaxHighlightCodeBlocks();
+  }
+
+  static removeOrphanHighlightedCodeblocks (e: HTMLElement) {
+    [...e.children].forEach((e: Element) => {
+      if (e.className.includes("hljs")) {
+        e.remove();
+      }
+    })
   }
 
   static SyntaxHighlightCodeBlocksNew(e: Event) {

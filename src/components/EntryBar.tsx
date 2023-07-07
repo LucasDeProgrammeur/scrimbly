@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface EntryBarProps {
   defaultText: string;
@@ -11,24 +11,32 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
   setEntryBarToggle
 }: EntryBarProps) => {
   const [inputValue, setInputValue] = useState("");
+  const focusRef = useRef(null)
+
+  useEffect(() => {
+    const currentRef = focusRef.current as unknown as HTMLElement;
+    if (currentRef) {
+      currentRef.focus();
+    }
+  }, []);
+
   return (
     <div className="entryBar" id="entryBar">
       <input
-      className="entryBarInput"
+        ref={focusRef}
+        className="entryBarInput"
         onKeyUp={(e) => {
-          
+
           const target = e.target as HTMLInputElement;
           if (e.key === "Enter") {
             e.preventDefault();
             fireAction(target.value);
             setEntryBarToggle(false)
-            
           }
           if (e.key === "Escape") {
             setEntryBarToggle(false);
           }
         }}
-        autoFocus
         placeholder={defaultText}
         type="text"
         value={inputValue}
