@@ -3,11 +3,11 @@ import "./App.css";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
 import WindowBar from "./components/WindowBar";
-import WordCounter from "./components/WordCounter";
 import EntryBar from "./components/EntryBar";
 import EditableManipulator from "./helpers/EditableManipulator";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
+import BottomBar from "./components/BottomBar";
 
 declare global {
   interface Window {
@@ -19,7 +19,6 @@ declare global {
 function App() {
   let [content, setContent] = useState("");
   let [currentNoteName, setCurrentNoteName] = useState("");
-  let [bottomBarText, setBottomBarText] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   let [shouldLockApp, setShouldLockApp] = useState(false);
   const [selectionRange, setSelectionRange] = useState({ range: null }) as any;
@@ -57,6 +56,7 @@ function App() {
   })
 
 
+
   useEffect(() => {
     const target = document.getElementsByClassName("editable")[0] as HTMLElement;
     if (currentNoteName === "") return;
@@ -64,7 +64,7 @@ function App() {
     let syncContentFromNote = async () => {
       let newContent = await window.dbConnection.getOneByName(currentNoteName);
       if (newContent) {
-        
+
         setContent(newContent.noteHTML || "");
         target.innerHTML = newContent.noteHTML;
       }
@@ -111,26 +111,26 @@ function App() {
           <LeftMenu
             setCurrentNoteName={setCurrentNoteName}
             currentNoteName={currentNoteName}
-            setBottomBarText={setBottomBarText}
             helpOpen={helpOpen}
             setHelpOpen={setHelpOpen}
             entryBarProps={entryBarProps}
+            entryBarOpen={entryBarOpen}
           />
           <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
           <>
             <div
               tabIndex={2}
-              contentEditable={currentNoteName ? "true" : "false"}
+              contentEditable={currentNoteName && !entryBarOpen ? "true" : "false"}
               suppressContentEditableWarning={true}
               onCopy={(e) => {
                 console.dir(e.clipboardData)
-                e.preventDefault(); 
-                const selectedText = window.getSelection()!.toString(); 
-                const range = document.createRange(); 
+                e.preventDefault();
+                const selectedText = window.getSelection()!.toString();
+                const range = document.createRange();
                 range.selectNode(document.body);
                 const copiedData = range.createContextualFragment(selectedText);
-                e.clipboardData.setData('text/plain', copiedData.textContent!); 
-                e.clipboardData.setData('text/html', ''); 
+                e.clipboardData.setData('text/plain', copiedData.textContent!);
+                e.clipboardData.setData('text/html', '');
               }}
               onClick={(e) => {
                 if (!currentNoteName) return;
@@ -165,11 +165,8 @@ function App() {
             </div>
           </>
         </main>
-        <div className="bottomBar">
-          <p className="bottomBarInfo">{bottomBarText}</p>
-          <WordCounter content={content} />
-        </div>
-        <div className="devBuildNotifier">Alpha build</div>
+        <BottomBar content={content} />
+        <div className="devBuildNotifier">Beta!</div>
       </div>
     </>
   );

@@ -5,7 +5,7 @@ const WindowBar = () => {
   return (
     <div className="windowBarContainer">
       <div className="draggable">
-        <p>Notes development build</p>
+        <p>Scrimbly</p>
       </div>
       <div className="windowControls">
         <button onClick={() => window.controls.minimize()} id="minimize">

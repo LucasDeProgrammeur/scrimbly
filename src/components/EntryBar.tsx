@@ -17,13 +17,17 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
     const currentRef = focusRef.current as unknown as HTMLElement;
     if (currentRef) {
       currentRef.focus();
+      let range = document.createRange()
+      range.setStart(currentRef, 0)
     }
-  }, []);
+  }, [focusRef]);
 
   return (
     <div className="entryBar" id="entryBar">
       <input
-        ref={focusRef}
+      ref={focusRef}
+      onBlur={console.log}
+      tabIndex={100}
         className="entryBarInput"
         onKeyUp={(e) => {
 

@@ -3,9 +3,9 @@ import EditableManipulator from "./EditableManipulator";
 
 export default function checkForLineFormatting(editable: Element) {
   let elementTypes = [
-    { syntax: "-!", element: "h1" },
-    { syntax: "-@", element: "h2" },
-    { syntax: "-#", element: "h3" },
+    { syntax: "###", element: "h3" },
+    { syntax: "##", element: "h2" },
+    { syntax: "#", element: "h1" },
     { syntax: "-s", element: "s" },
     {
       syntax: "`",
@@ -13,7 +13,6 @@ export default function checkForLineFormatting(editable: Element) {
       properties: [
         {
           attrName: "oninput",
-          val: () => console.log,
         },
         {
           attrName: "contenteditable",
@@ -45,8 +44,9 @@ export default function checkForLineFormatting(editable: Element) {
   children.forEach((e) => {
     elementTypes.forEach((typesE) => {
       if (!e.innerText) return;
+      console.log(e.innerText)
       // Check if text inside of a child contains syntax (-cb -s etc)
-      if (e.innerText.includes(typesE.syntax)) {
+      if (e.innerText.includes(typesE.syntax) && e.innerText.replace(/[^a-zA-Z0-9]/g, "").length > 1) {
         //Contains multiple elements? Loop through them and make them
         if (typesE.elements) {
           let previousElement: any;
@@ -82,7 +82,7 @@ export default function checkForLineFormatting(editable: Element) {
             }
           });
         }
-        EditableManipulator.setRangeOn(newElement.parentElement!, [...newElement.parentElement?.childNodes!].indexOf(newElement) +1);
+        EditableManipulator.setRangeOn(newElement.parentElement!, [...newElement.parentElement?.childNodes!].indexOf(newElement) + 1);
       }
     });
   });

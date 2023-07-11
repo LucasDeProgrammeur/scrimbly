@@ -26,19 +26,22 @@ const HelpPage = ({ setHelpOpen, helpOpen }: helpProps) => {
       <h3>Line Syntax</h3>
       <ul>
         <li>
-          <b>-!</b> : Main heading
+          <b>#</b> : Main heading
         </li>
         <li>
-          <b>-@</b> : Sub-heading
+          <b>##</b> : Sub-heading
         </li>
         <li>
-          <b>-#</b> : Sub-sub-heading
+          <b>###</b> : Sub-sub-heading
         </li>
         <li>
-          <b>-#</b> : Strikethrough (whole line)
+          <b>-s</b> : Strikethrough (whole line)
         </li>
         <li>
           <b>-cb</b> : Checkbox
+        </li>
+        <li>
+          <b>``</b> : Code block
         </li>
       </ul>
       <h3>Inline syntax (with the word "text" as example)</h3>

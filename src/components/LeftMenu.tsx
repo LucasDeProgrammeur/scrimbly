@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import FileEntry from "./FileEntry";
-import EntryBar from "./EntryBar";
 
 interface LeftMenuProps {
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
   currentNoteName: string;
-  setBottomBarText: React.Dispatch<React.SetStateAction<string>>;
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
   entryBarProps: any;
+  entryBarOpen: any;
 }
 
 const getNoteNames = async (setter: (arg0: any) => void) => {
@@ -19,10 +18,10 @@ const getNoteNames = async (setter: (arg0: any) => void) => {
 const LeftMenu = ({
   setCurrentNoteName,
   currentNoteName,
-  setBottomBarText,
   setHelpOpen,
   helpOpen,
-  entryBarProps
+  entryBarProps,
+  entryBarOpen
 }: LeftMenuProps) => {
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
@@ -71,12 +70,11 @@ const LeftMenu = ({
         className={!helpOpen ? "leftMenu" : "leftMenu disabled"}
         draggable
       >
-        <div className="topBar" onMouseLeave={() => setBottomBarText("")}>
+        <div className="topBar">
           <button
             className="newNoteButton"
-            onMouseEnter={() => setBottomBarText("New Note")}
-            onMouseLeave={() => setBottomBarText("")}
-            onClick={() => {  
+            disabled={entryBarOpen ? true : false}
+            onClick={() => {
               entryBarProps.setEntryBarOpen(true);
               entryBarProps.setEntryBarDefaultText("Enter a new note name...");
               entryBarProps.setEntryBarAction(() => async (newNoteName: string) => {
@@ -98,8 +96,8 @@ const LeftMenu = ({
             &#xE710;
           </button>
           <button
+          disabled={entryBarOpen ? true : false}
             className="deleteNoteButton red"
-            onMouseEnter={() => setBottomBarText("Delete Note")}
             onClick={() => {
               window.dbConnection.deleteOneByName(currentNoteName);
               setNoteNames(noteNames.filter((x) => x !== currentNoteName));
@@ -110,7 +108,7 @@ const LeftMenu = ({
             &#xE74D;
           </button>
           <button
-            onMouseEnter={() => setBottomBarText("Help")}
+          disabled={entryBarOpen ? true : false}
             onClick={() => {
               setHelpOpen(!helpOpen);
             }}
@@ -119,7 +117,7 @@ const LeftMenu = ({
             &#xE897;
           </button>
           <button
-            onMouseEnter={() => setBottomBarText("Export data")}
+          disabled={entryBarOpen ? true : false}
             onClick={() => {
               window.controls.export().then(() => {
                 enqueueSnackbar("Data exported");
@@ -129,7 +127,7 @@ const LeftMenu = ({
             &#xE78C;
           </button>
           <button
-            onMouseEnter={() => setBottomBarText("Import data")}
+          disabled={entryBarOpen ? true : false}
             onClick={async () => {
               let data = await window.controls.import();
               if (!data) {
@@ -151,11 +149,13 @@ const LeftMenu = ({
           onChange={(e) => {
             setNoteSearchQuery(e.target.value);
           }}
+          disabled={entryBarOpen}
+          style={entryBarOpen ? {pointerEvents: "none"} : {}}
         />
         <div className="fileList">
           {noteNames.map((e, i) =>
             e.toLowerCase().includes(noteSearchQuery.toLocaleLowerCase()) ||
-            e === currentNoteName ? (
+              e === currentNoteName ? (
               <FileEntry
                 setNoteNames={setNoteNames}
                 noteNames={noteNames}
