@@ -1,11 +1,13 @@
-
-const sqlite3 = require('sqlite3');
+const sqlite3 = require("sqlite3");
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
 const defaultData = { notes: [] };
 const DataHandler = require("./DataHandler.js");
 
 contextBridge.exposeInMainWorld("controls", {
+  isSingleInstance: () => {
+    return ipcRenderer.invoke("isSingleInstance");
+  },
   minimize: () => {
     ipcRenderer.invoke("minimize");
   },
@@ -24,7 +26,7 @@ contextBridge.exposeInMainWorld("controls", {
     let exportText = await ipcRenderer.invoke("getAll");
     fs.writeFileSync(
       path.filePaths[0] + `\\export-${date.getTime().toString()}.txt`,
-  
+
       JSON.stringify(exportText)
     );
   },
@@ -32,14 +34,12 @@ contextBridge.exposeInMainWorld("controls", {
     let path = await ipcRenderer.invoke("fileOpenImport");
 
     try {
-     
       let importData = await JSON.parse(fs.readFileSync(path.filePaths[0]));
       importData.map((e) => {
         ipcRenderer.invoke("insert", [e.noteName, e.noteHTML]);
-      })
-      return importData.map(e => e.noteName);
-    } catch (e) {
-    }
+      });
+      return importData.map((e) => e.noteName);
+    } catch (e) {}
   },
 });
 
@@ -51,7 +51,7 @@ contextBridge.exposeInMainWorld("controlsProperties", {
 
 contextBridge.exposeInMainWorld("dbConnection", {
   insert: (name, value) => {
-      return ipcRenderer.invoke("insert", [name, value]);
+    return ipcRenderer.invoke("insert", [name, value]);
   },
   getAll: () => {
     return ipcRenderer.invoke("getAll");
@@ -72,6 +72,6 @@ contextBridge.exposeInMainWorld("dbConnection", {
     ipcRenderer.invoke("deleteOneByName", [noteName]);
   },
   saveOne: (noteName, noteHTML) => {
-    return ipcRenderer.invoke("saveOne", [noteName, noteHTML])
-  }
+    return ipcRenderer.invoke("saveOne", [noteName, noteHTML]);
+  },
 });

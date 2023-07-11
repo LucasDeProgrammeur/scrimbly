@@ -1,0 +1,6 @@
+dialog {
+  background-color: rgb(40 40 48);
+  color: white;
+  border: none;
+  box-shadow: 0 0 20px rgb(24 24 28/0.52);
+}

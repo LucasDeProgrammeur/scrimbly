@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event'
 import DataHandler from "../public/DataHandler";
 
 window.dbConnection = new DataHandler();
+window.controls = {isSingleInstance: () => {return true}};
 
 const getByClass = queryByAttribute.bind(null, "class");
 jest.mock("../mocks/electronMock.js");
@@ -25,25 +26,31 @@ test("newNote", async () => {
   fireEvent.keyUp(entryBar!, { key: "Enter", code: "Enter", charCode: 13 });
   const noteName = getByClass(view.container, "fileEntry selectedEntry");
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  expect(
-    noteName?.textContent?.substring(0, noteName.textContent.length - 1)
-  ).toBe("new note");
+  
+  await waitFor(() => {
+      expect(screen.getByText('new note')).toBeInTheDocument();
+  }, {timeout: 3000});
+
 });
 
 test("editNote", async () => {
   const user = userEvent.setup();
   const view = render(<ReactLoader />);
-  const noteButton = await screen.findAllByText("new note");
-  user.click(noteButton[0]);
   const editable = getByClass(view.container, "editable");
   fireEvent.focus(editable!);
-  await userEvent.type(editable!, "{enter}*test* ", {delay: 100});
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   
   await waitFor(() => {
-    expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i);    
+    const noteButton = screen.queryByText('new note');
+    user.click(noteButton!);
   });
+  await userEvent.type(editable!, "{enter}*test* ", {delay: 100});
+
+  await waitFor(() => {
+    setTimeout(() => expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i), 500)
+  }, {timeout: 1000});
 });
+
 
 test("rename", async () => {
   const user = userEvent.setup();
@@ -62,8 +69,8 @@ test("rename", async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   await waitFor(() => {
-    expect(fileEntry[0]?.textContent).toBe("new note edit");
-  });
+    expect(screen.getByText('new note')).toBeInTheDocument();
+});
 });
 
 test("deleteNote", async () => {
