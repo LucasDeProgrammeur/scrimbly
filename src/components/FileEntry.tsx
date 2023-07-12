@@ -44,6 +44,7 @@ const FileEntry = ({
             entryBarProps.setEntryBarDefaultText("Enter new note name")
             entryBarProps.setEntryBarAction(() => (newNote: string) => {
               let updatedArray = noteNames;
+              console.log(noteNames)
               let index = updatedArray.findIndex(e => e === name);
               updatedArray[index] = newNote;
               setNoteNames(updatedArray);

@@ -160,6 +160,8 @@ const LeftMenu = ({
             e.toLowerCase().includes(noteSearchQuery.toLocaleLowerCase()) ||
               e === currentNoteName ? (
               <FileEntry
+                setNoteNames={setNoteNames}
+                noteNames={noteNames}
                 key={i as React.Key}
                 name={e}
                 entryBarProps={entryBarProps}
