@@ -1,7 +1,7 @@
 body {
-  overflow: hidden;
   margin: 0;
   outline: none;
+  overflow: hidden;
   font-family: 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

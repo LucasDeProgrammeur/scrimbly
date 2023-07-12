@@ -73,10 +73,15 @@ hljs {
   pointer-events: none;
 }
 
+.editorContainer {
+  width: calc(100% - 210px);
+
+}
+
 .editable {
   width: calc(100% - 210px);
   text-align: left;
-
+  height: calc(100% - 62px );
   border-style: none;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
@@ -198,15 +203,14 @@ hljs {
   height: 100%;
   width: 10px;
   cursor: w-resize;
-  transition: background-color 0.2s;
-  transition: width 0.3s;
+  transition: background-color 0.4s;
   background-color: transparent;
+  z-index: 2;
 }
 
 .resizerSpace:hover,
 .resizerSpace:active {
   background-color: rgb(64 100 119/0.5);
-  width: 15px;
 }
 
 .resizerSpace:hover,
@@ -316,6 +320,7 @@ hljs {
   left: calc(50% - 250px);
   border-radius: 0 0 10px 10px;
   box-shadow: 12px 0px 10px 5px rgba(25, 26, 31, 0.3);
+  z-index: 10;
 }
 
 .entryBar * {
@@ -386,3 +391,47 @@ hljs {
   right: 20px;
   opacity: 0.5;
 }
+
+.tabBar {
+  display: flex;
+  flex-direction: row;
+  width: calc(100% + 10px);
+  height: 42px;
+  background-color: rgb(38, 43, 50);
+  transform: translateX(-10px);
+}
+
+.tabItem {
+  height: calc(100% - 22px);
+  color: white;
+  font-size: 0.8em;
+  padding: 10px;
+  border: 0.8px solid #36393b;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+}
+
+.tabItem>div:nth-child(2) {
+  font-family: "segoeMDL2";
+  font-size: 0.6em;
+  line-height: 20px;
+  padding: 0 5px;
+}
+
+.tabItem>div:nth-child(2):hover {
+  background-color: black;
+  border-radius: 3px;
+}
+
+.selectedTab {
+  border-top: 1px solid #61dafb;
+  background-color: rgb(60, 66, 70);
+}
+
+
+
+.tabItem:hover {
+  background-color: rgb(60, 66, 70);
+}
+

@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { Dispatch, createContext, useEffect, useLayoutEffect, useState } from "react";
 import "./App.css";
 import HelpPage from "./components/HelpPage";
 import LeftMenu from "./components/LeftMenu";
@@ -8,6 +8,7 @@ import EditableManipulator from "./helpers/EditableManipulator";
 import checkForInlineFormatting from "./helpers/checkForFormatting";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
 import BottomBar from "./components/BottomBar";
+import TabBar from "./components/TabBar";
 
 declare global {
   interface Window {
@@ -16,8 +17,11 @@ declare global {
   }
 }
 
+export const CurrentNoteName = createContext(null as unknown as [string, Dispatch<React.SetStateAction<string>>]);
+
 function App() {
   let [content, setContent] = useState("");
+  let [tabs, setTabs] = useState([] as string[])
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   let [shouldLockApp, setShouldLockApp] = useState(false);
@@ -44,6 +48,7 @@ function App() {
     });
   });
 
+
   useLayoutEffect(() => {
     const selection = document.getSelection()!
     if (selectionRange !== undefined) {
@@ -54,7 +59,6 @@ function App() {
       }
     }
   })
-
 
 
   useEffect(() => {
@@ -87,87 +91,91 @@ function App() {
   return (
     <>
       <WindowBar />
-      <div
-        className="App"
-        onKeyDown={(e) => {
-          if (e.key === "Home") {
-            window.dbConnection.resetData();
-          }
-        }}
-      >
-        <dialog open={shouldLockApp}>
-          Opening two instances of Scrimbly at the same time could result in
-          notes being out of sync.
-          <button onClick={() => setShouldLockApp(false)}>OK</button>
-        </dialog>
-        {entryBarOpen && (
-          <EntryBar
-            defaultText={entryBarDefaultText}
-            setEntryBarToggle={setEntryBarOpen}
-            fireAction={entryBarAction}
-          />
-        )}
-        <main>
-          <LeftMenu
-            setCurrentNoteName={setCurrentNoteName}
-            currentNoteName={currentNoteName}
-            helpOpen={helpOpen}
-            setHelpOpen={setHelpOpen}
-            entryBarProps={entryBarProps}
-            entryBarOpen={entryBarOpen}
-          />
-          <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
-          <>
-            <div
-              tabIndex={2}
-              contentEditable={currentNoteName && !entryBarOpen ? "true" : "false"}
-              suppressContentEditableWarning={true}
-              onCopy={(e) => {
-                console.dir(e.clipboardData)
-                e.preventDefault();
-                const selectedText = window.getSelection()!.toString();
-                const range = document.createRange();
-                range.selectNode(document.body);
-                const copiedData = range.createContextualFragment(selectedText);
-                e.clipboardData.setData('text/plain', copiedData.textContent!);
-                e.clipboardData.setData('text/html', '');
-              }}
-              onClick={(e) => {
-                if (!currentNoteName) return;
-                setContent(
-                  document.getElementsByClassName("editable")[0].innerHTML
-                );
-              }}
-              onInput={(e) => {
-                const target = e.target as HTMLInputElement;
-                EditableManipulator.createDefaultElements(e);
-                EditableManipulator.SyntaxHighlightCodeBlocks()
-                EditableManipulator.removeOrphanHighlightedCodeblocks(e.target as HTMLElement)
-                checkForLineFormatting(target);
-                checkForInlineFormatting(target);
-                setSelectionRange(document.getSelection()!.getRangeAt(0).cloneRange())
-                setContent(target.innerHTML)
-                window.dbConnection.saveOne(currentNoteName, content);
-              }}
-              onKeyDown={async (e) => {
-                EditableManipulator.preventEditableBehavior(e);
-                if (e.key === "Insert") {
-                  window.dbConnection.clearDb();
-                }
+      <CurrentNoteName.Provider value={[currentNoteName, setCurrentNoteName]}>
+        <div
+          className="App"
+          onKeyDown={(e) => {
+            if (e.key === "Home") {
+              window.dbConnection.resetData();
+            }
+          }}
+        >
+          <dialog open={shouldLockApp}>
+            Opening two instances of Scrimbly at the same time could result in
+            notes being out of sync.
+            <button onClick={() => setShouldLockApp(false)}>OK</button>
+          </dialog>
+          {entryBarOpen && (
+            <EntryBar
+              defaultText={entryBarDefaultText}
+              setEntryBarToggle={setEntryBarOpen}
+              fireAction={entryBarAction}
+            />
+          )}
+          <main>
+            <LeftMenu
+              helpOpen={helpOpen}
+              setHelpOpen={setHelpOpen}
+              entryBarProps={entryBarProps}
+              entryBarOpen={entryBarOpen}
+              tabs={tabs}
+              setTabs={setTabs}
+            />
+            <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
+            <>
+              <div className="editorContainer">
+                <TabBar tabs={tabs} setTabs={setTabs} />
+                <div
+                  tabIndex={2}
+                  contentEditable={currentNoteName && !entryBarOpen ? "true" : "false"}
+                  suppressContentEditableWarning={true}
+                  onCopy={(e) => {
+                    e.preventDefault();
+                    const selectedText = window.getSelection()!.toString();
+                    const range = document.createRange();
+                    range.selectNode(document.body);
+                    const copiedData = range.createContextualFragment(selectedText);
+                    e.clipboardData.setData('text/plain', copiedData.textContent!);
+                    e.clipboardData.setData('text/html', '');
+                  }}
+                  onClick={(e) => {
+                    if (!currentNoteName) return;
+                    setContent(
+                      document.getElementsByClassName("editable")[0].innerHTML
+                    );
+                  }}
+                  onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    EditableManipulator.createDefaultElements(e);
+                    EditableManipulator.SyntaxHighlightCodeBlocks()
+                    EditableManipulator.removeOrphanHighlightedCodeblocks(e.target as HTMLElement)
+                    checkForLineFormatting(target);
+                    checkForInlineFormatting(target);
+                    setSelectionRange(document.getSelection()!.getRangeAt(0).cloneRange())
+                    setContent(target.innerHTML)
+                    window.dbConnection.saveOne(currentNoteName, content);
+                  }}
+                  onKeyDown={async (e) => {
+                    EditableManipulator.preventEditableBehavior(e);
+                    if (e.key === "Insert") {
+                      window.dbConnection.clearDb();
+                    }
 
-                // setContent(EditableManipulator.handleKeyPress(e) || "");
-              }}
-              className="editable"
-            >
-              <div>
-                <br></br>
+                    // setContent(EditableManipulator.handleKeyPress(e) || "");
+                  }}
+                  className="editable"
+                >
+                  <div>
+                    <br></br>
+                  </div>
+                </div>
               </div>
-            </div>
-          </>
-        </main>
-        <BottomBar content={content} />
-        <div className="devBuildNotifier">Beta!</div>
-      </div>
+            </>
+          </main>
+          <BottomBar content={content} />
+          <div className="devBuildNotifier">Beta!</div>
+        </div>
+      </CurrentNoteName.Provider>
     </>
   );
 }

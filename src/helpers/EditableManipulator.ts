@@ -27,7 +27,6 @@ class EditableManipulator {
 
         let parentElement = node!.parentElement;
         e.preventDefault();
-        console.log(node?.nodeName);
 
         if (
           node?.nodeName === "CODE" ||
@@ -140,10 +139,6 @@ class EditableManipulator {
     const target = this.getNodeContentEditable() as HTMLElement;
     if (target?.nodeName !== "CODE") return;
 
-
-
-    console.log("TRIGGERED")
-    console.dir(target)
 
     let codeOverlay;
     if (!target.nextElementSibling?.className.includes("highlightOverlay")) {

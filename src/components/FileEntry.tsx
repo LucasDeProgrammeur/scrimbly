@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { CurrentNoteName } from "../App";
 
 interface FileEntryProps {
   setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
@@ -7,21 +8,29 @@ interface FileEntryProps {
   noteNames: string[];
   setNoteNames: React.Dispatch<React.SetStateAction<any>>;
   entryBarProps: any;
+  tabs: Array<string>;
+  setTabs: React.Dispatch<React.SetStateAction<Array<string>>>;
 }
 
 const FileEntry = ({
-  currentNoteName,
-  setCurrentNoteName,
   name,
   noteNames,
   setNoteNames,
-  entryBarProps
+  entryBarProps,
+  tabs,
+  setTabs
 }: FileEntryProps) => {
+  const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName) as any;
   const [localNoteName, setLocalNoteName] = useState(name);
   return (
     <>
       <div
-        onClick={() => setCurrentNoteName(name)}
+        onClick={() => {
+          setCurrentNoteName(name);
+          if (tabs.indexOf(localNoteName) === -1) {
+            setTabs([...tabs, localNoteName])
+          }
+        }}
         className={
           currentNoteName === name ? "fileEntry selectedEntry" : "fileEntry"
         }
@@ -32,7 +41,7 @@ const FileEntry = ({
           aria-label="edit note name"
           onClick={() => {
             entryBarProps.setEntryBarOpen(true)
-            entryBarProps.setEntryBarDefaultText("Enter new note name") 
+            entryBarProps.setEntryBarDefaultText("Enter new note name")
             entryBarProps.setEntryBarAction(() => (newNote: string) => {
               let updatedArray = noteNames;
               let index = updatedArray.findIndex(e => e === name);
