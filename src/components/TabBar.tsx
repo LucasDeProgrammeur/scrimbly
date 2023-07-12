@@ -23,10 +23,8 @@ const TabBar = ({ tabs, setTabs }: TabBarProps) => {
                     <div>{name}</div>
                     {name === currentNoteName ?
                         <div style={{ zIndex: 2 }} onClick={(ev) => { 
-                            let newTabs = tabs;
                             ev.stopPropagation(); 
-                            setCurrentNoteName(tabs[i - 1]); 
-
+                            setCurrentNoteName(tabs[i + 1]); 
                             setTabs(tabs.filter(tabName => tabName !== name)) }}>&#xE8BB;
                         </div> : ""}
                 </div>)
