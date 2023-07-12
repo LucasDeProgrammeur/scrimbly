@@ -26,8 +26,8 @@ const TabBar = ({ tabs, setTabs }: TabBarProps) => {
                             let newTabs = tabs;
                             ev.stopPropagation(); 
                             setCurrentNoteName(tabs[i - 1]); 
-                            newTabs.splice(tabs.indexOf(name, 1))
-                            setTabs(newTabs) }}>&#xE8BB;
+
+                            setTabs(tabs.filter(tabName => tabName !== name)) }}>&#xE8BB;
                         </div> : ""}
                 </div>)
         }))
