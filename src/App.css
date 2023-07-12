@@ -429,9 +429,11 @@ hljs {
   background-color: rgb(60, 66, 70);
 }
 
-
-
 .tabItem:hover {
   background-color: rgb(60, 66, 70);
+}
+
+.disableHover > *:hover {
+  background-color: rgb(38, 43, 50);
 }
 

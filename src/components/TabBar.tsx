@@ -1,5 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CurrentNoteName } from "../App";
+import Sortable from 'sortablejs';
+import { ReactSortable } from "react-sortablejs";
 
 interface TabBarProps {
     tabs: string[];
@@ -9,31 +11,40 @@ interface TabBarProps {
 
 
 const TabBar = ({ tabs, setTabs }: TabBarProps) => {
-
     const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName);
 
-    let [tabElements, setTabElements] = useState([] as JSX.Element[]);
-
+    const [localTabs, setLocalTabs] = useState(tabs.map((e, i) => ({ id: i, name: e, description: "" })))
 
 
     useEffect(() => {
-        setTabElements(tabs.map((name, i) => {
-            return (
-                <div key={i} onClick={() => setCurrentNoteName(name)} className={name === currentNoteName ? "tabItem selectedTab" : "tabItem"}>
-                    <div>{name}</div>
-                    {name === currentNoteName ?
-                        <div style={{ zIndex: 2 }} onClick={(ev) => { 
-                            ev.stopPropagation(); 
-                            setCurrentNoteName(tabs[i + 1]); 
-                            setTabs(tabs.filter(tabName => tabName !== name)) }}>&#xE8BB;
-                        </div> : ""}
-                </div>)
-        }))
-    }, [currentNoteName, setTabs, tabs, setCurrentNoteName])
+        setLocalTabs(tabs.map((e, i) => ({ id: i, name: e, description: "" })))
+    }, [tabs])
 
-    return (<div className="tabBar" >
-        {tabElements}
-    </div>);
+    useEffect(() => console.log("tabs changed to:", tabs), [tabs])
+
+    return (
+        <ReactSortable
+            list={localTabs} setList={setLocalTabs}
+            className="tabBar"
+            onChange={e => e.target.classList.add("disableHover")}
+            onEnd={e => e.target.classList.remove("disableHover")}
+            animation={200}>
+            {localTabs.map((e, i) => {
+                console.log(e)
+                return (
+                    <div key={i} onClick={() => setCurrentNoteName(e.name)} className={e.name === currentNoteName ? "tabItem selectedTab" : "tabItem"}  >
+                        <div>{e.name}</div>
+                        {e.name === currentNoteName ?
+                            <div onClick={(ev) => {
+                                ev.stopPropagation();
+                                setCurrentNoteName(tabs[i + 1]);
+                                setTabs(tabs.filter(tabName => tabName !== e.name))
+                            }}>&#xE8BB;
+                            </div> : ""}
+                    </div>)
+
+            })}
+        </ReactSortable>);
 }
 
 export default TabBar;

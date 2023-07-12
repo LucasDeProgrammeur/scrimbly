@@ -48,7 +48,6 @@ function App() {
     });
   });
 
-
   useLayoutEffect(() => {
     const selection = document.getSelection()!
     if (selectionRange !== undefined) {
