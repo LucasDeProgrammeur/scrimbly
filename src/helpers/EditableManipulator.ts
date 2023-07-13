@@ -38,7 +38,6 @@ class EditableManipulator {
             let breakline = document.createElement("br")
             enter.appendChild(breakline)
             let parent = window.getSelection()?.anchorNode!.parentNode?.parentNode;
-            console.log(window.getSelection()?.anchorNode!.parentNode?.parentNode?.nextSibling)
             target.insertBefore(enter, parent?.nextSibling!)
             this.setRangeOn(breakline, 0)
             return;
@@ -191,7 +190,6 @@ class EditableManipulator {
   static SyntaxHighlightCodeBlocksNew(e: Event) {
     const target = e.target as HTMLInputElement;
     const innerHTMLCodeblock = target.innerHTML;
-    console.log(innerHTMLCodeblock);
     hljs.highlightElement(target as HTMLElement);
   }
 

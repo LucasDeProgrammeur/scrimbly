@@ -1,15 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import FileEntry from "./FileEntry";
-import { CurrentNoteName } from "../App";
+import { CurrentNoteName, CurrentTabs } from "../App";
 
 interface LeftMenuProps {
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
   entryBarProps: any;
   entryBarOpen: any;
-  tabs: Array<string>;
-  setTabs: React.Dispatch<React.SetStateAction<Array<string>>>;
 }
 
 const getNoteNames = async (setter: (arg0: any) => void) => {
@@ -21,17 +19,17 @@ const LeftMenu = ({
   helpOpen,
   entryBarProps,
   entryBarOpen,
-  tabs,
-  setTabs
 }: LeftMenuProps) => {
   const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName);
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
   let [noteNames, setNoteNames] = useState<string[]>([]);
+  const [currentTabs, setCurrentTabs] = useContext(CurrentTabs);
 
   useEffect(() => {
+    console.log(noteNames)
     getNoteNames(setNoteNames);
-  }, []);
+  }, [noteNames]);
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
@@ -84,14 +82,14 @@ const LeftMenu = ({
                   noteNames.length &&
                   noteNames.findIndex((e) => e === newNoteName) !== -1
                 ) {
-                  enqueueSnackbar("Note name already exists");
+                  enqueueSnackbar("Note name already exists", {variant: "error"})
                   return;
                 }
                 setNoteNames([...noteNames, newNoteName]);
                 await window.dbConnection.insert(newNoteName, "<div><br></div>");
                 setCurrentNoteName(newNoteName);
                 entryBarProps.setEntryBarOpen(false);
-                setTabs([...tabs, newNoteName])
+                setCurrentTabs([...currentTabs, newNoteName])
               })
             }}
             aria-label="New note"
@@ -102,9 +100,10 @@ const LeftMenu = ({
           disabled={entryBarOpen ? true : false}
             className="deleteNoteButton red"
             onClick={() => {
-              window.dbConnection.deleteOneByName(currentNoteName);
               setNoteNames(noteNames.filter((x) => x !== currentNoteName));
+              setCurrentTabs(currentTabs.filter((x) => x !== currentNoteName))
               setCurrentNoteName("");
+              window.dbConnection.deleteOneByName(currentNoteName);
             }}
             aria-label="Delete note"
           >
@@ -162,11 +161,9 @@ const LeftMenu = ({
               <FileEntry
                 setNoteNames={setNoteNames}
                 noteNames={noteNames}
-                key={i as React.Key}
+                key={i + e as React.Key}
                 name={e}
                 entryBarProps={entryBarProps}
-                tabs={tabs}
-                setTabs={setTabs}
               />
             ) : (
               <></>

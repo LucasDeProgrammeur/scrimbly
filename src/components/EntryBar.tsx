@@ -26,7 +26,6 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
     <div className="entryBar" id="entryBar">
       <input
       ref={focusRef}
-      onBlur={console.log}
       tabIndex={100}
         className="entryBarInput"
         onKeyUp={(e) => {

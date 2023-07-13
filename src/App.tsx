@@ -18,10 +18,11 @@ declare global {
 }
 
 export const CurrentNoteName = createContext(null as unknown as [string, Dispatch<React.SetStateAction<string>>]);
+export const CurrentTabs = createContext(null as unknown as [string[], Dispatch<React.SetStateAction<string[]>>]);
 
 function App() {
   let [content, setContent] = useState("");
-  let [tabs, setTabs] = useState([] as string[])
+  let [currentTabs, setCurrentTabs] = useState([] as string[])
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   let [shouldLockApp, setShouldLockApp] = useState(false);
@@ -91,6 +92,7 @@ function App() {
     <>
       <WindowBar />
       <CurrentNoteName.Provider value={[currentNoteName, setCurrentNoteName]}>
+      <CurrentTabs.Provider value={[currentTabs, setCurrentTabs]}>
         <div
           className="App"
           onKeyDown={(e) => {
@@ -117,13 +119,11 @@ function App() {
               setHelpOpen={setHelpOpen}
               entryBarProps={entryBarProps}
               entryBarOpen={entryBarOpen}
-              tabs={tabs}
-              setTabs={setTabs}
             />
             <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
             <>
               <div className="editorContainer">
-                <TabBar tabs={tabs} setTabs={setTabs} />
+                <TabBar />
                 <div
                   tabIndex={2}
                   contentEditable={currentNoteName && !entryBarOpen ? "true" : "false"}
@@ -174,6 +174,7 @@ function App() {
           <BottomBar content={content} />
           <div className="devBuildNotifier">Beta!</div>
         </div>
+      </CurrentTabs.Provider>
       </CurrentNoteName.Provider>
     </>
   );
