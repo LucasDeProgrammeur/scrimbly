@@ -44,7 +44,7 @@ test("editNote", async () => {
     const noteButton = screen.queryByText('new note');
     user.click(noteButton!);
   });
-  await userEvent.type(editable!, "{enter}*test* ", {delay: 100});
+  await userEvent.type(editable!, "{enter}*test* ", {delay: 200});
 
   await waitFor(() => {
     setTimeout(() => expect(editable?.innerHTML).toMatch(/<em>test<\/em>.*/i), 500)
@@ -69,7 +69,7 @@ test("rename", async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   await waitFor(() => {
-    expect(screen.getByText('new note')).toBeInTheDocument();
+    expect(screen.getByText('new note edit')).toBeInTheDocument();
 });
 });
 

@@ -44,7 +44,6 @@ export default function checkForLineFormatting(editable: Element) {
   children.forEach((e) => {
     elementTypes.forEach((typesE) => {
       if (!e.innerText) return;
-      console.log(e.innerText)
       // Check if text inside of a child contains syntax (-cb -s etc)
       if (e.innerText.includes(typesE.syntax) && e.innerText.replace(/[^a-zA-Z0-9]/g, "").length > 1) {
         //Contains multiple elements? Loop through them and make them

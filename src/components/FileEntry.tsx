@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { CurrentNoteName, CurrentTabs } from "../App";
+import { useSnackbar } from "notistack";
 
 interface FileEntryProps {
-  setCurrentNoteName: React.Dispatch<React.SetStateAction<string>>;
-  currentNoteName: string;
   name: string;
   noteNames: string[];
   setNoteNames: React.Dispatch<React.SetStateAction<any>>;
@@ -10,18 +10,24 @@ interface FileEntryProps {
 }
 
 const FileEntry = ({
-  currentNoteName,
-  setCurrentNoteName,
   name,
   noteNames,
   setNoteNames,
-  entryBarProps
+  entryBarProps,
 }: FileEntryProps) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName) as any;
   const [localNoteName, setLocalNoteName] = useState(name);
+  const [currentTabs, setCurrentTabs] = useContext(CurrentTabs);
   return (
     <>
       <div
-        onClick={() => setCurrentNoteName(name)}
+        onClick={() => {
+          setCurrentNoteName(name);
+          if (currentTabs.indexOf(localNoteName) === -1) {
+            setCurrentTabs([...currentTabs, localNoteName])
+          }
+        }}
         className={
           currentNoteName === name ? "fileEntry selectedEntry" : "fileEntry"
         }
@@ -32,14 +38,21 @@ const FileEntry = ({
           aria-label="edit note name"
           onClick={() => {
             entryBarProps.setEntryBarOpen(true)
-            entryBarProps.setEntryBarDefaultText("Enter new note name") 
+            entryBarProps.setEntryBarDefaultText("Enter new note name")
             entryBarProps.setEntryBarAction(() => (newNote: string) => {
               let updatedArray = noteNames;
               let index = updatedArray.findIndex(e => e === name);
+              if (updatedArray.indexOf(newNote) !== -1) {
+                enqueueSnackbar("Note name already exists", {variant: "error"})
+                return;
+              }
+
               updatedArray[index] = newNote;
               setNoteNames(updatedArray);
+              setCurrentTabs(currentTabs.map(e => e === name ? newNote : e))
               window.dbConnection.updateName(newNote, name);
               setLocalNoteName(newNote);
+              setCurrentNoteName(newNote)
             })
           }}
         >

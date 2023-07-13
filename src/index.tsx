@@ -1,11 +1,8 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "highlight.js/styles/github-dark.css";
 import "./index.css";
 import "./";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { SnackbarProvider } from "notistack";
 import ReactLoader from "./components/ReactLoader";
 import "./Dialog.css";
 

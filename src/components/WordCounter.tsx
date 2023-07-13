@@ -10,7 +10,6 @@ const WordCounter = ({content }:WordCounterProps) => {
 
   useEffect(() =>{
     let codeFilter = content ? content.replace(/<code.*code>/g, '') : ""
-    console.log(content)
     let nbspFilter = codeFilter.replace("nbsp;", " ");
     let text = nbspFilter ? nbspFilter.replace(/<[^>]+>/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '') : "";
     
