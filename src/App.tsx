@@ -63,7 +63,12 @@ function App() {
 
   useEffect(() => {
     const target = document.getElementsByClassName("editable")[0] as HTMLElement;
-    if (currentNoteName === "") return;
+    if (!currentNoteName) {
+      target.innerHTML = `<h1>Welcome to Scrimbly</h1>
+      <p>Select a note, or create a new one to get started.</p>
+      `;
+      return
+    };
     if (target === undefined) return;
     let syncContentFromNote = async () => {
       let newContent = await window.dbConnection.getOneByName(currentNoteName);
