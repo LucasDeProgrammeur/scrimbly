@@ -9,6 +9,8 @@ import checkForInlineFormatting from "./helpers/checkForFormatting";
 import checkForLineFormatting from "./helpers/checkForLineFormatting";
 import BottomBar from "./components/BottomBar";
 import TabBar from "./components/TabBar";
+import { handleShortcut } from "./helpers/shortcutHandler";
+import OptionBar from "./components/OptionBar";
 
 declare global {
   interface Window {
@@ -26,6 +28,7 @@ function App() {
   let [currentNoteName, setCurrentNoteName] = useState("");
   let [helpOpen, setHelpOpen] = useState(false);
   let [shouldLockApp, setShouldLockApp] = useState(false);
+  let [optionBarOpen, setOptionBarOpen] = useState(false);
   const [selectionRange, setSelectionRange] = useState({ range: null }) as any;
   let [entryBarDefaultText, setEntryBarDefaultText] = useState(
     "Enter new note name"
@@ -95,16 +98,14 @@ function App() {
 
   return (
     <>
+    {optionBarOpen && <OptionBar setOptionBarOpen={setOptionBarOpen} /> }
       <WindowBar />
       <CurrentNoteName.Provider value={[currentNoteName, setCurrentNoteName]}>
       <CurrentTabs.Provider value={[currentTabs, setCurrentTabs]}>
         <div
+
           className="App"
-          onKeyDown={(e) => {
-            if (e.key === "Home") {
-              window.dbConnection.resetData();
-            }
-          }}
+          onKeyDown={e => handleShortcut(e, optionBarOpen, setOptionBarOpen)}
         >
           <dialog open={shouldLockApp}>
             Opening two instances of Scrimbly at the same time could result in
