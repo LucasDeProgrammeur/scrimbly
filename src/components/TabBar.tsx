@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CurrentNoteName, CurrentTabs } from "../App";
 import { ReactSortable } from "react-sortablejs";
 
@@ -8,7 +8,7 @@ import { ReactSortable } from "react-sortablejs";
 const TabBar = () => {
     const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName);
     const [currentTabs, setCurrentTabs] = useContext(CurrentTabs);
-
+    const tabBarRef = useRef(null as any)
     const [localTabs, setLocalTabs] = useState(currentTabs.map((e, i) => ({ id: i, name: e, description: "" })))
 
     const handleDeletion = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>, currentTab: any, index: number) => {
@@ -21,6 +21,12 @@ const TabBar = () => {
         setLocalTabs(currentTabs.map((e, i) => ({ id: i, name: e, description: "" })))
     }, [currentTabs])
 
+    useEffect(() => {
+        document.getElementsByClassName("tabBar")[0].addEventListener("wheel", (e: any) => {
+            document.getElementsByClassName("tabBar")[0].scrollLeft += e.deltaY;
+        })
+    }, [])
+
 
     return (
         <ReactSortable
@@ -28,7 +34,8 @@ const TabBar = () => {
             className="tabBar"
             onChange={e => e.target.classList.add("disableHover")}
             onEnd={e => e.target.classList.remove("disableHover")}
-            animation={200}>
+            animation={200}
+            ref={tabBarRef}>
             {localTabs.map((e, i) => {
                 return (
                     <div key={i}

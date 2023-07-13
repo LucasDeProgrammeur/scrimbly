@@ -17,13 +17,14 @@ h1, h2, h3 {
 }
 
 *::-webkit-scrollbar {
-  width: 9px;
+  width: 3px;
+  height: 3px;
   background-color: transparent;
   margin: 10px;
 }
 
 *::-webkit-scrollbar-thumb {
-  width: 8px;
+  width: 3px;
   background-color: rgb(15 15 20/0.4);
   border-radius: 17px;
 }
@@ -399,6 +400,9 @@ hljs {
   height: 42px;
   background-color: rgb(38, 43, 50);
   transform: translateX(-10px);
+  overflow-x: scroll;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .tabItem {
@@ -406,10 +410,13 @@ hljs {
   color: white;
   font-size: 0.8em;
   padding: 10px;
+  flex-shrink: 0;
   border: 0.8px solid #36393b;
   cursor: pointer;
   display: flex;
   gap: 8px;
+  text-overflow: clip;
+  overflow: hidden;
 }
 
 .tabItem>div:nth-child(2) {
