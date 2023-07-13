@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CurrentNoteName, CurrentTabs } from "../App";
 import { ReactSortable } from "react-sortablejs";
 
@@ -11,6 +11,11 @@ const TabBar = () => {
 
     const [localTabs, setLocalTabs] = useState(currentTabs.map((e, i) => ({ id: i, name: e, description: "" })))
 
+    const handleDeletion = (ev: React.MouseEvent<HTMLDivElement, MouseEvent>, currentTab: any, index: number) => {
+        ev.stopPropagation();
+        setCurrentNoteName(currentTabs[index + 1]);
+        setCurrentTabs(currentTabs.filter(tabName => tabName !== currentTab.name))
+    }
 
     useEffect(() => {
         setLocalTabs(currentTabs.map((e, i) => ({ id: i, name: e, description: "" })))
@@ -26,14 +31,24 @@ const TabBar = () => {
             animation={200}>
             {localTabs.map((e, i) => {
                 return (
-                    <div key={i} onClick={() => setCurrentNoteName(e.name)} className={e.name === currentNoteName ? "tabItem selectedTab" : "tabItem"}  >
+                    <div key={i}
+                        onMouseDown={(ev) => {
+                            if (ev.button === 1) {
+                                ev.preventDefault();
+                                handleDeletion(ev, e, i)
+                            }
+                        }}
+                        onClick={(ev: any) => {
+                            console.log(ev.button)
+                            setCurrentNoteName(e.name)
+                        }
+                        }
+                        className={e.name === currentNoteName ? "tabItem selectedTab" : "tabItem"}
+
+                    >
                         <div>{e.name}</div>
                         {e.name === currentNoteName ?
-                            <div onClick={(ev) => {
-                                ev.stopPropagation();
-                                setCurrentNoteName(currentTabs[i + 1]);
-                                setCurrentTabs(currentTabs.filter(tabName => tabName !== e.name))
-                            }}>&#xE8BB;
+                            <div onClick={ev => handleDeletion(ev, e, i)}>&#xE8BB;
                             </div> : ""}
                     </div>)
 

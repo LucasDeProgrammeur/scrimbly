@@ -27,9 +27,8 @@ const LeftMenu = ({
   const [currentTabs, setCurrentTabs] = useContext(CurrentTabs);
 
   useEffect(() => {
-    console.log(noteNames)
     getNoteNames(setNoteNames);
-  }, [noteNames]);
+  }, []);
 
   useEffect(() => {
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
