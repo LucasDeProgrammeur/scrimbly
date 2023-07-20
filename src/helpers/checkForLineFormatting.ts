@@ -20,7 +20,7 @@ export default function checkForLineFormatting(editable: Element) {
         },
         {
           attrName: "tabIndex",
-          val: "4",
+          val: "150",
         },
       ],
     },
@@ -36,7 +36,7 @@ export default function checkForLineFormatting(editable: Element) {
     {
       syntax: "-cb",
       element: "input",
-      properties: [{ attrName: "type", val: "checkbox" }],
+      properties: [{ attrName: "type", val: "checkbox" }, {attrName: "tabindex", val: "-1"}],
     },
   ];
 

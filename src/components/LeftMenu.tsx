@@ -2,12 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import FileEntry from "./FileEntry";
 import { CurrentNoteName, CurrentTabs } from "../App";
+import { deleteNote, importNote, newNote } from "../helpers/actionFunctions";
 
 interface LeftMenuProps {
   setHelpOpen: React.Dispatch<React.SetStateAction<boolean>>;
   helpOpen: boolean;
   entryBarProps: any;
   entryBarOpen: any;
+  noteNames: string[];
+  setNoteNames: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const getNoteNames = async (setter: (arg0: any) => void) => {
@@ -19,11 +22,12 @@ const LeftMenu = ({
   helpOpen,
   entryBarProps,
   entryBarOpen,
+  noteNames,
+  setNoteNames
 }: LeftMenuProps) => {
   const [currentNoteName, setCurrentNoteName] = useContext(CurrentNoteName);
   const { enqueueSnackbar } = useSnackbar();
   const [noteSearchQuery, setNoteSearchQuery] = useState("");
-  let [noteNames, setNoteNames] = useState<string[]>([]);
   const [currentTabs, setCurrentTabs] = useContext(CurrentTabs);
 
   useEffect(() => {
@@ -65,51 +69,31 @@ const LeftMenu = ({
   return (
     <>
       <div
-        tabIndex={1}
         className={!helpOpen ? "leftMenu" : "leftMenu disabled"}
         draggable
       >
         <div className="topBar">
           <button
+            tabIndex={90}
             className="newNoteButton"
             disabled={entryBarOpen ? true : false}
-            onClick={() => {
-              entryBarProps.setEntryBarOpen(true);
-              entryBarProps.setEntryBarDefaultText("Enter a new note name...");
-              entryBarProps.setEntryBarAction(() => async (newNoteName: string) => {
-                if (
-                  noteNames.length &&
-                  noteNames.findIndex((e) => e === newNoteName) !== -1
-                ) {
-                  enqueueSnackbar("Note name already exists", {variant: "error"})
-                  return;
-                }
-                setNoteNames([...noteNames, newNoteName]);
-                await window.dbConnection.insert(newNoteName, "<div><br></div>");
-                setCurrentNoteName(newNoteName);
-                entryBarProps.setEntryBarOpen(false);
-                setCurrentTabs([...currentTabs, newNoteName])
-              })
-            }}
+            onClick={() => newNote(entryBarProps, noteNames, setNoteNames, setCurrentNoteName, setCurrentTabs, currentTabs)}
             aria-label="New note"
           >
             &#xE710;
           </button>
           <button
-          disabled={entryBarOpen ? true : false}
+            tabIndex={91}
+            disabled={entryBarOpen ? true : false}
             className="deleteNoteButton red"
-            onClick={() => {
-              setNoteNames(noteNames.filter((x) => x !== currentNoteName));
-              setCurrentTabs(currentTabs.filter((x) => x !== currentNoteName))
-              setCurrentNoteName("");
-              window.dbConnection.deleteOneByName(currentNoteName);
-            }}
+            onClick={() => deleteNote(noteNames, setNoteNames, setCurrentTabs, setCurrentNoteName, currentNoteName, currentTabs)}
             aria-label="Delete note"
           >
             &#xE74D;
           </button>
           <button
-          disabled={entryBarOpen ? true : false}
+            tabIndex={92}
+            disabled={entryBarOpen ? true : false}
             onClick={() => {
               setHelpOpen(!helpOpen);
             }}
@@ -118,7 +102,8 @@ const LeftMenu = ({
             &#xE897;
           </button>
           <button
-          disabled={entryBarOpen ? true : false}
+            tabIndex={93}
+            disabled={entryBarOpen ? true : false}
             onClick={() => {
               window.controls.export().then(() => {
                 enqueueSnackbar("Data exported");
@@ -128,22 +113,15 @@ const LeftMenu = ({
             &#xE78C;
           </button>
           <button
-          disabled={entryBarOpen ? true : false}
-            onClick={async () => {
-              let data = await window.controls.import();
-              if (!data) {
-                enqueueSnackbar("Scrimbly was unable to import these notes");
-                return;
-              }
-              setNoteNames(data);
-              
-              enqueueSnackbar("Data imported");
-            }}
+            tabIndex={94}
+            disabled={entryBarOpen ? true : false}
+            onClick={() => importNote(setNoteNames)}
           >
             &#xE8E5;
           </button>
         </div>
         <input
+          tabIndex={96}
           type="text"
           className="searchBox"
           placeholder="Note search"
@@ -151,7 +129,7 @@ const LeftMenu = ({
             setNoteSearchQuery(e.target.value);
           }}
           disabled={entryBarOpen}
-          style={entryBarOpen ? {pointerEvents: "none"} : {}}
+          style={entryBarOpen ? { pointerEvents: "none" } : {}}
         />
         <div className="fileList">
           {noteNames.map((e, i) =>

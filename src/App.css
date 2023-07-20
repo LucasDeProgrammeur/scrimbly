@@ -488,8 +488,9 @@ hljs {
   cursor: pointer;
 }
 
-.optionBar ul li:hover {
-  background-color: rgb(38, 43, 50)
+.optionBar ul li:hover, .optionBar ul li:focus {
+  background-color: rgb(72, 77, 83);
+  outline: none;
 }
 
 .optionBar img {

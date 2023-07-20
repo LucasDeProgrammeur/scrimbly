@@ -8,10 +8,11 @@ const WindowBar = () => {
         <p>Scrimbly</p>
       </div>
       <div className="windowControls">
-        <button onClick={() => window.controls.minimize()} id="minimize">
+        <button tabIndex={-1} onClick={() => window.controls.minimize()} id="minimize">
           &#xE921;
         </button>
         <button
+          tabIndex={-1}
           onClick={() => {
             maximized ? window.controls.restore() : window.controls.maximize();
             setMaximized(!maximized);
@@ -20,7 +21,7 @@ const WindowBar = () => {
         >
           {maximized ? "" : ""}
         </button>
-        <button onClick={() => window.controls.close()} id="close">
+        <button tabIndex={-1} onClick={() => window.controls.close()} id="close">
           &#xE8BB;
         </button>
       </div>
