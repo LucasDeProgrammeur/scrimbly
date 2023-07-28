@@ -81,7 +81,7 @@ const OptionBar = ({
     },
     { description: "Help", icon: "\uE897", action: () => setHelpOpen(true) },
     {
-      description: "OpenAI Note Autocomplete",
+      description: "OpenAI Note Autocomplete (not yet available)",
       icon: OpenAIImg,
       action: () => {},
       needsCurrentNote: true
