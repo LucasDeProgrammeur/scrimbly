@@ -1,8 +1,8 @@
-const sqlite3 = require('sqlite3')
+
 
 class DataHandler {
   constructor() {
-    this.db = new sqlite3.Database('./scrimblydb.db')
+    this.db = require('better-sqlite3')('scrimblydb.db', {});
   }
 
    getAll() {
@@ -22,24 +22,27 @@ class DataHandler {
   }
 
    updateName(newNoteName, oldNoteName) {
-    this.db.run(
-      `UPDATE notes SET noteName = '${newNoteName}' WHERE noteName = '${oldNoteName}'`,
+    let stmt = this.db.prepare(
+      `UPDATE notes SET noteName = ? WHERE noteName = ?`
     )
+
+    stmt.run([newNoteName, oldNoteName])
   }
 
    getAllNoteNames() {
-    this.db.run(
+    this.db.exec(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
     )
 
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT id, noteName FROM notes', (err, data) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(data.map((e) => e['noteName']))
-      })
+      let stmt = this.db.prepare('SELECT id, noteName FROM notes')
+      // stmt.all('SELECT id, noteName FROM notes', (err, data) => {
+      //   if (err) {
+      //     reject(err)
+      //   }
+      //   resolve(data.map((e) => e['noteName']))
+      // })
     })
   }
 
@@ -47,23 +50,15 @@ class DataHandler {
     this.db.run('DELETE FROM notes')
   }
 
-     getOneByName(noteName) {
-    this.db.run(
-      'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
-      (callback) => {},
+  getOneByName(noteName) {
+    this.db.exec(
+      'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)'
     )
-
+    const stmt = this.db.prepare(`SELECT noteName, noteHTML FROM notes WHERE noteName = ?`)
     return new Promise((resolve, reject) => {
-      this.db.get(
-        `SELECT noteName, noteHTML FROM notes WHERE noteName = '${noteName}'`,
-        (err, data) => {
-          if (err) {
-            reject(err)
-          }
-          resolve(data)
-        },
-      )
+      resolve(stmt.get([noteName]))
     })
+
   }
 
    async noteExists(noteName) {
@@ -92,25 +87,25 @@ class DataHandler {
   }
 
    deleteOneByName(noteName) {
-    this.db.run(`DELETE FROM notes WHERE noteName = '${noteName}'`)
+    let stmt = this.db.prepare(`DELETE FROM notes WHERE noteName = ?`)
+    stmt.run([noteName])
   }
 
    async insert(noteName, noteHTML) {
-    this.db.run(
-      'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
-      (callback) => {},
+    this.db.exec(
+      'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)'
     )
-    let queryString = `INSERT INTO notes (noteName, noteHTML) VALUES ('${noteName}', '${noteHTML}')`
-    let queryStringIfExists = `UPDATE notes SET noteHTML = '${noteHTML}' WHERE noteName = '${noteName}'`
+    let queryString = this.db.prepare(`INSERT INTO notes (noteName, noteHTML) VALUES (?, ?)`).bind(noteName, noteHTML);
+    let queryStringIfExists = this.db.prepare(`UPDATE notes SET noteHTML = ? WHERE noteName = ?`).bind(noteHTML, noteName)
 
     let exists = await this.noteExists(noteName)
 
     if (exists) {
-      this.db.exec(queryStringIfExists)
+      queryStringIfExists.run()
       return
     }
 
-    this.db.exec(queryString)
+    queryString.run()
   }
 
   closeDb() {

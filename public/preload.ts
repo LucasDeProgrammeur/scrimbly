@@ -1,4 +1,3 @@
-const sqlite3 = require("sqlite3");
 const { contextBridge, ipcRenderer } = require("electron");
 const fs = require("fs");
 const defaultData = { notes: [] };

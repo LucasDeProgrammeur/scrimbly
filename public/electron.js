@@ -1,9 +1,8 @@
 const path = require('path')
-const sqlite3 = require('sqlite3')
+// const db = require('better-sqlite3')('scrimblydb.db', {});
 
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
-const isDev = require('electron-is-dev')
-let db = new sqlite3.Database('./scrimblydb.db')
+const isDev = require('electron-is-dev');
 
 const DataHandler = require('./DataHandler')
 
@@ -102,7 +101,7 @@ ipcMain.handle('saveOne', (e, args) => {
 
 ipcMain.handle('deleteOneByName', (e, args) => {
   let noteName = args[0]
-  db.run(`DELETE FROM notes WHERE noteName = '${noteName}'`)
+  handler.deleteOneByName(noteName)
 })
 
 ipcMain.handle('insert', async (e, args) => {
