@@ -43,6 +43,8 @@ export default function checkForLineFormatting(editable: Element) {
   let children = editable.querySelectorAll("div");
   children.forEach((e) => {
     elementTypes.forEach((typesE) => {
+      // Return if it's a CODE element
+      if (e.firstChild?.nodeName === "CODE") return;
       if (!e.innerText) return;
       // Check if text inside of a child contains syntax (-cb -s etc)
       if (e.innerText.includes(typesE.syntax) && e.innerText.replace(/[^a-zA-Z0-9]/g, "").length > 1) {

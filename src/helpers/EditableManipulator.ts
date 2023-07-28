@@ -13,6 +13,16 @@ class EditableManipulator {
     }
   }
 
+  static wrapOrphanText (e: React.FormEvent<HTMLDivElement>) {
+    let target = e.target as HTMLElement;
+    target.childNodes.forEach(e => {
+      if (e.nodeType === Node.TEXT_NODE) {
+        let newEl = document.createElement("div");
+        newEl.textContent = e.textContent;
+        e.replaceWith(newEl)
+      }
+    })
+  }
 
 
   static preventEditableBehavior(e: React.KeyboardEvent<Element>) {
@@ -71,6 +81,13 @@ class EditableManipulator {
         let newTabs = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
         EditableManipulator.setRangeAfter(newTabs as unknown as HTMLElement);
         break;
+      case "Backspace":
+        if (
+          node?.nodeName === "CODE" && node.textContent === ""
+        ) {
+          console.dir(node.parentElement!.childNodes);
+          node.parentElement!.remove()
+        }
     }
   }
 
@@ -149,6 +166,7 @@ class EditableManipulator {
 
       codeOverlay.addEventListener("keydown", (event) => {
         event.preventDefault();
+      
       });
 
       codeOverlay.addEventListener("keypress", (event) => {

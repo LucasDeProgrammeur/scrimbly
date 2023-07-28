@@ -38,7 +38,6 @@ const OptionBar = ({
         )[0] as HTMLElement;
       }
 
-      console.log(nextSibling);
       setFocusedElement(nextSibling);
     }
   };
@@ -105,7 +104,6 @@ const OptionBar = ({
   ];
 
   useEffect(() => {
-    console.log("triggered");
     const currentRef = focusRef.current as unknown as HTMLElement;
     if (currentRef) {
       currentRef.focus();
@@ -114,12 +112,8 @@ const OptionBar = ({
     }
     setFocusedElement(focusRef.current);
   }, [focusRef.current]);
-  useEffect(() => {
-    console.log(inputValue);
-  }, [inputValue]);
 
   useEffect(() => {
-    console.log(focusedElement);
     focusedElement && focusedElement.focus();
   }, [focusedElement]);
 

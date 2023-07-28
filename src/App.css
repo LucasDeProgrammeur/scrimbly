@@ -53,15 +53,18 @@ main {
 
 code {
   pointer-events: auto;
+  transform: translateY(42px);
   z-index: 3;
   min-height: 20px;
+  display: block;
+  overflow: visible;
 }
 
 code,
 hljs {
-  position: relative;
+
+
   left: 0;
-  display: inline-block;
   background-color: black !important;
   padding: 20px !important;
   border-radius: 10px !important;
@@ -69,9 +72,13 @@ hljs {
 }
 
 .hljs {
-  transform: translateX(-100%);
+  left: 10px;
+  position: absolute;
+  display: inline-block;
   opacity: 0.8;
   pointer-events: none;
+  display: inline;
+  transform: translateY(calc(-100% + 42px));
 }
 
 .editorContainer {
@@ -80,13 +87,17 @@ hljs {
 }
 
 .editable {
-  width: calc(100% - 210px);
+  width: calc(100% - 30px);
   text-align: left;
   height: calc(100% - 62px );
   border-style: none;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   outline: none;
+  position: relative;
+}
+
+.editable div {
 }
 
 .shadowElement {
@@ -105,7 +116,7 @@ hljs {
 
 .helpPage {
   position: absolute;
-  z-index: 1;
+  z-index: 4;
   top: 0;
   left: 0;
   margin: 40px;
@@ -370,6 +381,7 @@ hljs {
   top: 5px;
 }
 
+
 .fileEntry * {
   display: inline;
   vertical-align: middle;
@@ -422,7 +434,7 @@ hljs {
 .tabItem>div:nth-child(2) {
   font-family: "segoeMDL2";
   font-size: 0.6em;
-  line-height: 20px;
+  line-height: 18px;
   padding: 0 5px;
 }
 

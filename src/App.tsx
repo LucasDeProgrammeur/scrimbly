@@ -178,6 +178,7 @@ function App() {
                     }}
                     onInput={(e) => {
                       const target = e.target as HTMLInputElement;
+                      EditableManipulator.wrapOrphanText(e)
                       EditableManipulator.createDefaultElements(e);
                       EditableManipulator.SyntaxHighlightCodeBlocks()
                       EditableManipulator.removeOrphanHighlightedCodeblocks(e.target as HTMLElement)
