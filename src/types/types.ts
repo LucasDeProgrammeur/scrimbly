@@ -2,4 +2,11 @@ interface notes {
     noteName: string;
 }
 
-export default notes;
+enum EntryBarResult {
+    SUCCESS,
+    RETRY,
+    FAILURE
+}
+
+export { EntryBarResult };
+export type { notes };

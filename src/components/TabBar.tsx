@@ -46,7 +46,6 @@ const TabBar = () => {
                             }
                         }}
                         onClick={(ev: any) => {
-                            console.log(ev.button)
                             setCurrentNoteName(e.name)
                         }
                         }

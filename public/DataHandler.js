@@ -12,7 +12,7 @@ class DataHandler {
     )
 
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT noteName, noteHTML FROM notes', (err, data) => {
+      this.db.prepare('SELECT noteName, noteHTML FROM notes', (err, data) => {
         if (err) {
           reject(err)
         }
@@ -29,7 +29,7 @@ class DataHandler {
     stmt.run([newNoteName, oldNoteName])
   }
 
-   getAllNoteNames() {
+  getAllNoteNames() {
     this.db.exec(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
@@ -37,12 +37,7 @@ class DataHandler {
 
     return new Promise((resolve, reject) => {
       let stmt = this.db.prepare('SELECT id, noteName FROM notes')
-      // stmt.all('SELECT id, noteName FROM notes', (err, data) => {
-      //   if (err) {
-      //     reject(err)
-      //   }
-      //   resolve(data.map((e) => e['noteName']))
-      // })
+      resolve(stmt.all().map(e => e.noteName));
     })
   }
 

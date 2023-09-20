@@ -78,7 +78,6 @@ export default function checkForLineFormatting(editable: Element) {
             }
             if (typeof property.val === "function") {
               newElement.addEventListener("keyup", (e) =>
-                console.log("event trigger")
               );
             }
           });

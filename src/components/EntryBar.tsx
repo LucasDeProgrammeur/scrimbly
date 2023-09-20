@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { EntryBarResult } from "../types/types";
 
 interface EntryBarProps {
   defaultText: string;
@@ -28,13 +29,15 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
       ref={focusRef}
       tabIndex={100}
         className="entryBarInput"
-        onKeyUp={(e) => {
+        onKeyDown={(e) => {
 
           const target = e.target as HTMLInputElement;
           if (e.key === "Enter") {
             e.preventDefault();
-            fireAction(target.value);
-            setEntryBarToggle(false)
+            let actionResult = fireAction(target.value);
+
+
+            if (actionResult=== EntryBarResult.SUCCESS) setEntryBarToggle(false)
           }
           if (e.key === "Escape") {
             setEntryBarToggle(false);

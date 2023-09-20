@@ -1,5 +1,6 @@
 import { enqueueSnackbar } from "notistack";
 import { CurrentTabs } from "../App";
+import { EntryBarResult } from "../types/types";
 
 
 const importNote = async (setNoteNames: React.Dispatch<React.SetStateAction<string[]>>) => {
@@ -39,13 +40,14 @@ const newNote = (
             noteNames.findIndex((e) => e === newNoteName) !== -1
         ) {
             enqueueSnackbar("Note name already exists", { variant: "error" })
-            return;
+            return EntryBarResult.RETRY;
         }
         setNoteNames([...noteNames, newNoteName]);
         await window.dbConnection.insert(newNoteName, "<div><br></div>");
         setCurrentNoteName(newNoteName);
         entryBarProps.setEntryBarOpen(false);
         setCurrentTabs([...currentTabs, newNoteName])
+        return EntryBarResult.SUCCESS;
     })
 }
 

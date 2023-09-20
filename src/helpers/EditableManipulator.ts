@@ -85,7 +85,6 @@ class EditableManipulator {
         if (
           node?.nodeName === "CODE" && node.textContent === ""
         ) {
-          console.dir(node.parentElement!.childNodes);
           node.parentElement!.remove()
         }
     }

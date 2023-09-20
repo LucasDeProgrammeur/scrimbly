@@ -126,6 +126,7 @@ const OptionBar = ({
     }
 
     if (action && e.key === "Enter") {
+      e.preventDefault();
       action();
       setOptionBarOpen(false)
     }
