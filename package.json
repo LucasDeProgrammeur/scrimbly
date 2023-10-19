@@ -40,6 +40,7 @@
     "eject": "react-scripts eject",
     "dev": "concurrently -k \"npm start\" \"npm run electron\"",
     "electron": "wait-on tcp:3000 && electron .",
+    "justelectron": "electron .",
     "rebuild": "electron-rebuild -f -w better-sqlite3",
     "dist": "electron-builder",
     "test:debug": "react-scripts --inspect-brk test --forceExit"
@@ -61,6 +62,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "build": {
+    "win": {
+      "icon": "build/icon.ico"
+    }
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.4",

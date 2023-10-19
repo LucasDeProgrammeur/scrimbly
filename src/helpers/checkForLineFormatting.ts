@@ -76,10 +76,6 @@ export default function checkForLineFormatting(editable: Element) {
             if (typeof property.val === "boolean") {
               newElement.setAttribute(property.attrName, 'true');
             }
-            if (typeof property.val === "function") {
-              newElement.addEventListener("keyup", (e) =>
-              );
-            }
           });
         }
         EditableManipulator.setRangeOn(newElement.parentElement!, [...newElement.parentElement?.childNodes!].indexOf(newElement) + 1);

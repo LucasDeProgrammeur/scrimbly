@@ -18,6 +18,7 @@ function createWindow() {
       nodeIntegration: true,
       enableRemoteModule: true,
       preload: path.join(__dirname, 'preload.ts'),
+      icon: path.join(__dirname, 'icon.ico')
     },
   })
 
