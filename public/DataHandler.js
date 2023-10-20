@@ -69,14 +69,8 @@ class DataHandler {
 
    saveOne(noteName, noteHTML) {
     return new Promise((resolve, reject) => {
-      this.db.exec(
-        `UPDATE notes SET noteHTML = '${noteHTML}' WHERE noteName = '${noteName}'`,
-        (err) => {
-          if (err) {
-            reject(err)
-          }
-        },
-      )
+      let stmt = this.db.prepare(`UPDATE notes SET noteHTML = ? WHERE noteName = ?`,)
+      stmt.run([noteHTML, noteName])
       resolve()
     })
   }

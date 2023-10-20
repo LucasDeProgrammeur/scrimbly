@@ -11,6 +11,7 @@ import BottomBar from "./components/BottomBar";
 import TabBar from "./components/TabBar";
 import { handleShortcut } from "./helpers/shortcutHandler";
 import OptionBar from "./components/OptionBar";
+import ContextMenu from "./components/ContextMenu";
 
 declare global {
   interface Window {
@@ -31,6 +32,7 @@ function App() {
   let [shouldLockApp, setShouldLockApp] = useState(false);
   let [optionBarOpen, setOptionBarOpen] = useState(false);
   let [noteNames, setNoteNames] = useState<string[]>([]);
+  let [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [selectionRange, setSelectionRange] = useState({ range: null }) as any;
   let [entryBarDefaultText, setEntryBarDefaultText] = useState(
     "Enter new note name"
@@ -105,6 +107,7 @@ function App() {
 
   return (
     <>
+    {contextMenuOpen && <ContextMenu />}
       <WindowBar />
       <CurrentNoteName.Provider value={[currentNoteName, setCurrentNoteName]}>
         <CurrentTabs.Provider value={[currentTabs, setCurrentTabs]}>
@@ -115,7 +118,10 @@ function App() {
             entryBarProps={entryBarProps} 
             setHelpOpen={setHelpOpen} />}
           <div
-            
+            onContextMenu={e => {
+              e.preventDefault();
+              setContextMenuOpen(!contextMenuOpen)
+            }}
             className="App"
             onKeyDown={e => handleShortcut(e, optionBarOpen, setOptionBarOpen)}
           >
@@ -162,6 +168,8 @@ function App() {
                       const cbData = e.clipboardData.getData('text/plain');
                       if (cbData) {
                         e.preventDefault();
+                        const selection = window.getSelection();
+                        selection?.deleteFromDocument();
                         e.clipboardData.setData('text/plain', cbData.toString())
                         const node = EditableManipulator.getNodeContentEditable();
                         const newNode = document.createTextNode(e.clipboardData.getData('text/plain'))
