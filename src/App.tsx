@@ -148,8 +148,8 @@ function App() {
               />
               <HelpPage helpOpen={helpOpen} setHelpOpen={setHelpOpen} />
               <>
-                <div className="editorContainer">
                   <TabBar />
+                <div className="editorContainer">
                   <div
                   ref={focusRef}
                     tabIndex={-1}

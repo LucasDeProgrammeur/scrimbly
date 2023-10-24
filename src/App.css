@@ -83,7 +83,8 @@ hljs {
 
 .editorContainer {
   width: calc(100% - 210px);
-
+  overflow-x: hidden;
+  margin-top: 42px;
 }
 
 .editable {
@@ -415,6 +416,8 @@ hljs {
   overflow-x: scroll;
   overflow-y: auto;
   scrollbar-width: thin;
+  position: absolute;
+  left: 220px;
 }
 
 .tabItem {

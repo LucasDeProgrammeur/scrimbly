@@ -35,10 +35,14 @@ const LeftMenu = ({
   }, []);
 
   useEffect(() => {
+    let baseWidth = 220;
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
     const leftSide = document.getElementsByClassName("leftMenu")[0];
     const rightSide = document.getElementsByClassName(
       "editorContainer"
+    )[0] as HTMLElement;
+    const tabBar = document.getElementsByClassName(
+      "tabBar"
     )[0] as HTMLElement;
     const container = document.getElementsByClassName("App")[0] as HTMLElement;
     var moveX =
@@ -54,10 +58,12 @@ const LeftMenu = ({
     container.addEventListener("mousemove", function (e) {
       moveX = e.x;
       let newWidth =
-        moveX - resize.getBoundingClientRect().width / 2 + 10 + "px";
+        moveX - resize.getBoundingClientRect().width / 2 + 50;
+      if (newWidth < baseWidth) newWidth = baseWidth;
       if (drag) {
-        rightSide.style.width = "calc(100% - " + newWidth + ")";
-        leftSide.style.width = newWidth;
+        rightSide.style.width = "calc(100% - " + newWidth + "px)";
+        tabBar.style.left = newWidth + 10 + "px"; //+10 compensation for divider
+        leftSide.style.width = newWidth + "px";
       }
     });
 
