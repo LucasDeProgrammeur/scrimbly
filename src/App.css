@@ -62,8 +62,6 @@ code {
 
 code,
 hljs {
-
-
   left: 0;
   background-color: black !important;
   padding: 20px !important;
@@ -96,9 +94,6 @@ hljs {
   display: inline-block;
   outline: none;
   position: relative;
-}
-
-.editable div {
 }
 
 .shadowElement {
@@ -190,16 +185,9 @@ hljs {
   margin: 20px;
 }
 
-/* .leftMenu {
-  background-color: rgb(42, 42, 48);
-  width: 210px;
-  resize: horizontal;
-  border: 2px solid;
-} */
-
 .leftMenu {
   background-color: rgb(42, 42, 48);
-  min-width: 220px;
+  width: 220px;
   -webkit-user-drag: none;
   box-shadow: 2px -1px 20px rgb(24 24 32/0.32);
   overflow-y: auto;
@@ -207,8 +195,6 @@ hljs {
 }
 
 .leftMenu .fileEntry {
-  text-overflow: ellipsis;
-  white-space: nowrap;
   width: inherit;
 }
 
@@ -382,16 +368,14 @@ hljs {
   top: 5px;
 }
 
-
-.fileEntry * {
-  display: inline;
-  vertical-align: middle;
-}
-
 .fileEntry p {
   margin: auto;
   line-height: 32px;
   letter-spacing: 0.3px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
 }
 
 .fileEntry:hover button {
@@ -417,7 +401,7 @@ hljs {
   overflow-y: auto;
   scrollbar-width: thin;
   position: absolute;
-  left: 220px;
+  left: 230px;
 }
 
 .tabItem {

@@ -13,17 +13,16 @@ class EditableManipulator {
     }
   }
 
-  static wrapOrphanText (e: React.FormEvent<HTMLDivElement>) {
+  static wrapOrphanText(e: React.FormEvent<HTMLDivElement>) {
     let target = e.target as HTMLElement;
-    target.childNodes.forEach(e => {
+    target.childNodes.forEach((e) => {
       if (e.nodeType === Node.TEXT_NODE) {
         let newEl = document.createElement("div");
         newEl.textContent = e.textContent;
-        e.replaceWith(newEl)
+        e.replaceWith(newEl);
       }
-    })
+    });
   }
-
 
   static preventEditableBehavior(e: React.KeyboardEvent<Element>) {
     let target = e.target as HTMLElement;
@@ -34,7 +33,6 @@ class EditableManipulator {
 
     switch (e.key) {
       case "Enter":
-
         let parentElement = node!.parentElement;
         e.preventDefault();
 
@@ -43,17 +41,18 @@ class EditableManipulator {
           node?.parentElement?.nodeName === "CODE"
         ) {
           if (!e.shiftKey) {
-            e.preventDefault()
-            let enter = document.createElement("div")
-            let breakline = document.createElement("br")
-            enter.appendChild(breakline)
-            let parent = window.getSelection()?.anchorNode!.parentNode?.parentNode;
-            target.insertBefore(enter, parent?.nextSibling!)
-            this.setRangeOn(breakline, 0)
+            e.preventDefault();
+            let enter = document.createElement("div");
+            let breakline = document.createElement("br");
+            enter.appendChild(breakline);
+            let parent =
+              window.getSelection()?.anchorNode!.parentNode?.parentNode;
+            target.insertBefore(enter, parent?.nextSibling!);
+            this.setRangeOn(breakline, 0);
             return;
           }
 
-          this.insertTextInCodeBlock("\n")
+          this.insertTextInCodeBlock("\n");
           return;
         }
 
@@ -70,22 +69,19 @@ class EditableManipulator {
         EditableManipulator.setRangeOn(node!.nextSibling as HTMLElement);
         break;
       case "Tab":
-
         if (
           node?.nodeName === "CODE" ||
           node?.parentElement?.nodeName === "CODE"
         ) {
-          this.insertTextInCodeBlock("\t")
+          this.insertTextInCodeBlock("\t");
         }
         e.preventDefault();
         let newTabs = document.createTextNode("\u00a0\u00a0\u00a0\u00a0");
         EditableManipulator.setRangeAfter(newTabs as unknown as HTMLElement);
         break;
       case "Backspace":
-        if (
-          node?.nodeName === "CODE" && node.textContent === ""
-        ) {
-          node.parentElement!.remove()
+        if (node?.nodeName === "CODE" && node.textContent === "") {
+          node.parentElement!.remove();
         }
     }
   }
@@ -121,6 +117,28 @@ class EditableManipulator {
     }
   }
 
+  static getCurrentCaretPosition() {
+    const selection = window.getSelection()!;
+    const range = selection.getRangeAt(0);
+    const caretOffset = range.startOffset;
+
+    return caretOffset;
+  }
+
+  static restoreCaretPosition(savedCaretPosition: number) {
+    const editable = document.getElementsByClassName(
+      "editable"
+    )[0] as HTMLElement;
+    const selection = window.getSelection()!;
+    const range = document.createRange();
+
+    range.setStart(editable, savedCaretPosition);
+    range.collapse(true);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }
+
   static handleKeyPress(e: React.KeyboardEvent) {
     const target = e.target as HTMLInputElement;
 
@@ -154,53 +172,58 @@ class EditableManipulator {
     const target = this.getNodeContentEditable() as HTMLElement;
     if (target?.nodeName !== "CODE") return;
 
-
     let codeOverlay;
     if (!target.nextElementSibling?.className.includes("highlightOverlay")) {
-      codeOverlay = document.createElement("code")
-      codeOverlay.classList.add("highlightOverlay")
-      codeOverlay.setAttribute("contenteditable", "false")
-      codeOverlay.setAttribute("tabindex", "-1")
+      codeOverlay = document.createElement("code");
+      codeOverlay.classList.add("highlightOverlay");
+      codeOverlay.setAttribute("contenteditable", "false");
+      codeOverlay.setAttribute("tabindex", "-1");
 
-
-      codeOverlay.addEventListener("keydown", (event) => {
+      codeOverlay.addEventListener("3", (event) => {
         event.preventDefault();
-      
       });
 
       codeOverlay.addEventListener("keypress", (event) => {
         event.preventDefault();
       });
 
+      codeOverlay.addEventListener("keydown", (event) => {
+        event.preventDefault();
+      });
+
+
       codeOverlay.addEventListener("paste", (event) => {
         event.preventDefault();
       });
 
-      target.insertAdjacentElement('afterend', codeOverlay)
+      target.insertAdjacentElement("afterend", codeOverlay);
     } else {
-      codeOverlay = target.nextElementSibling
+      codeOverlay = target.nextElementSibling;
     }
-    codeOverlay.textContent = ""
+    codeOverlay.textContent = "";
     codeOverlay.textContent = target.textContent;
-    codeOverlay.setAttribute("class", "highlightOverlay")
+    codeOverlay.setAttribute("class", "highlightOverlay");
     hljs.highlightElement(codeOverlay as HTMLElement);
   }
 
   static insertTextInCodeBlock(textToInsert: string) {
     const codeContent = document.getSelection()?.anchorNode!.textContent;
     const offset = document.getSelection()?.anchorOffset!;
-    const newString = codeContent?.substring(0, offset) + textToInsert + codeContent?.substring(offset, codeContent.length)
+    const newString =
+      codeContent?.substring(0, offset) +
+      textToInsert +
+      codeContent?.substring(offset, codeContent.length);
     let node = document.getSelection()?.anchorNode as Node;
-    node.textContent = newString
-    this.setRangeOn(node as HTMLElement, offset + textToInsert.length)
+    node.textContent = newString;
+    this.setRangeOn(node as HTMLElement, offset + textToInsert.length);
     this.SyntaxHighlightCodeBlocks();
   }
 
-  static removeOrphanHighlightedCodeblocks (e: HTMLElement) {
-    [...e.children].forEach((e: Element) => {
-      if (e.className.includes("hljs")) {
-        e.remove();
-      }
+  static removeOrphanHighlightedCodeblocks(e: HTMLElement) {
+    
+    const codeElements = document.querySelectorAll(".hljs")
+    codeElements.forEach(e => {
+      if (!e.innerHTML) e.remove()
     })
   }
 

@@ -6,18 +6,15 @@ class DataHandler {
   }
 
    getAll() {
-    this.db.run(
+    this.db.exec(
       'CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY AUTOINCREMENT, noteName TEXT, noteHTML TEXT)',
       (callback) => {},
     )
 
+
     return new Promise((resolve, reject) => {
-      this.db.prepare('SELECT noteName, noteHTML FROM notes', (err, data) => {
-        if (err) {
-          reject(err)
-        }
-        resolve(data)
-      })
+      let stmt = this.db.prepare('SELECT noteName, noteHTML FROM notes')
+      resolve(stmt.all());
     })
   }
 

@@ -34,6 +34,7 @@ const EntryBar: React.FunctionComponent<EntryBarProps> = ({
           const target = e.target as HTMLInputElement;
           if (e.key === "Enter") {
             e.preventDefault();
+            document.getElementById("App")?.focus();
             let actionResult = fireAction(target.value);
 
 

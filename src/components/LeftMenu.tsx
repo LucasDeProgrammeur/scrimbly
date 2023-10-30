@@ -37,7 +37,7 @@ const LeftMenu = ({
   useEffect(() => {
     let baseWidth = 220;
     const resize = document.getElementsByClassName("resizerSpace")[0]!;
-    const leftSide = document.getElementsByClassName("leftMenu")[0];
+    const leftSide = document.getElementsByClassName("leftMenu")[0] as HTMLElement;
     const rightSide = document.getElementsByClassName(
       "editorContainer"
     )[0] as HTMLElement;
@@ -50,7 +50,7 @@ const LeftMenu = ({
       resize.getBoundingClientRect().width / 2;
     let drag = false;
 
-    resize.addEventListener("mousedown", function (e) {
+    resize.addEventListener("mousedown", function (e: any) {
       drag = true;
       moveX = e.x;
     });
@@ -67,9 +67,13 @@ const LeftMenu = ({
       }
     });
 
-    container.addEventListener("mouseup", function (e) {
+    container.addEventListener("mouseup", () => {
       drag = false;
     });
+
+    container.addEventListener("mouseleave", () => {
+      drag = false;
+    })
   }, []);
 
   return (

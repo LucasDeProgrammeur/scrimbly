@@ -22,12 +22,14 @@ contextBridge.exposeInMainWorld("controls", {
   export: async () => {
     let date = new Date();
     let path = await ipcRenderer.invoke("fileOpenExport");
-    let exportText = await ipcRenderer.invoke("getAll");
-    fs.writeFileSync(
-      path.filePaths[0] + `\\export-${date.getTime().toString()}.txt`,
+    let exportText = await ipcRenderer.invoke("getAll")
+      fs.writeFileSync(
+        path.filePaths[0] + `\\export-${date.getTime().toString()}.txt`,
+  
+        JSON.stringify(exportText)
+      );
 
-      JSON.stringify(exportText)
-    );
+
   },
   import: async () => {
     let path = await ipcRenderer.invoke("fileOpenImport");

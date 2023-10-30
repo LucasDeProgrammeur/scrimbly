@@ -5,7 +5,7 @@ const WindowBar = () => {
   return (
     <div className="windowBarContainer">
       <div className="draggable">
-        <p>Scrimbly</p>
+        <p>Scrimbly | Markdown note editor</p>
       </div>
       <div className="windowControls">
         <button tabIndex={-1} onClick={() => window.controls.minimize()} id="minimize">
